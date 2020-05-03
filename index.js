@@ -38,10 +38,8 @@ app.use(function(err, req, res, next) {
 app.get("/", (request, response) => {
     //this is a Web page so set the content-type to HTML
     response.writeHead(200, {'Content-Type': 'text/html'});
-    // for (i = 1; i < 7; i++) {
         //write a response to the client
         response.write('<h' + 1 + ' style="color:blue">Hello, welcome to our group project app! To view documentation please go to <br> https://team4-tcss450-project-server.herokuapp.com/doc/</h' + 1 + '>'); 
-    // }
     response.end(); //end the response
 });
 

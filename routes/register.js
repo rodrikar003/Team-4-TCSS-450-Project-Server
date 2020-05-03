@@ -24,7 +24,7 @@ router.use(bodyParser.json())
  * 
  * @apiParam {String} first a users first name
  * @apiParam {String} last a users last name
- * @apiParam {String} username a users username 
+ * @apiParam {String} username a users nickname
  * @apiParam {String} email a users email *required unique
  * @apiParam {String} password a users password
  * 
