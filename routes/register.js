@@ -24,6 +24,7 @@ router.use(bodyParser.json())
  * 
  * @apiParam {String} first a users first name
  * @apiParam {String} last a users last name
+ * @apiParam {String} username a users username 
  * @apiParam {String} email a users email *required unique
  * @apiParam {String} password a users password
  * 
@@ -44,7 +45,7 @@ router.post('/', (req, res) => {
     //Retrieve data from query params
     var first = req.body.first
     var last = req.body.last
-    var username = req.body.email //username not required for lab. Use email
+    var username = req.body.username //username not required for lab. Use email
     var email = req.body.email
     var password = req.body.password
     //Verify that the caller supplied all the parameters
@@ -68,6 +69,9 @@ router.post('/', (req, res) => {
                     email: result.rows[0].email
                 })
                 sendEmail("uwnetid@uw.edu", email, "Welcome!", "<strong>Welcome to our app!</strong>");
+               
+                ///// email Verification
+
             })
             .catch((err) => {
                 //log the error
