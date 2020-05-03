@@ -14,7 +14,6 @@ app.use('/auth', require('./routes/login.js'))
 app.use('/auth', require('./routes/register.js')) 
 
  app.use('/hello', require('./routes/hello.js')) 
-//app.use('Doc', require('./routes/doc.js'))
 
 app.use('/params', require('./routes/params.js')) 
 
@@ -51,7 +50,7 @@ app.get("/", (request, response) => {
  * Serve the API documentation genertated by apidoc as HTML. 
  * https://apidocjs.com/
  */
-// app.use("/doc", express.static('apidoc'))
+ app.use("/doc", express.static('apidoc'))
 
 /* 
 * Heroku will assign a port you can use via the 'PORT' environment variable
