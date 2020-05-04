@@ -48,9 +48,10 @@ router.post('/', (req, res) => {
     var username = req.body.username 
     var email = req.body.email
     var password = req.body.password
+    var verification = req.body.verification
     //Verify that the caller supplied all the parameters
     //In js, empty strings or null values evaluate to false
-    if(first && last && username && email && password) {
+    if(first && last && username && email && password && verification) {
         //We're storing salted hashes to make our application more secure
         //If you're interested as to what that is, and why we should use it
         //watch this youtube video: https://www.youtube.com/watch?v=8ZtInClXe1Q
@@ -68,7 +69,7 @@ router.post('/', (req, res) => {
                     success: true,
                     email: result.rows[0].email
                 })
-                sendEmail("uwnetid@uw.edu", email, "Welcome!", "<strong>Welcome to our app!</strong>");
+                sendEmail("uwnetid@uw.edu", email, verification, "<strong>Welcome to our app!</strong>");
                
                 ///// email Verification
 
