@@ -10,11 +10,7 @@ const bodyParser = require("body-parser");
 app.use(bodyParser.json())
 
 app.use('/auth', require('./routes/login.js')) 
-
 app.use('/auth', require('./routes/register.js')) 
-
-  // app.use('/hello', require('./routes/hello.js')) 
-// app.use('/params', require('./routes/params.js')) 
 
 
 
