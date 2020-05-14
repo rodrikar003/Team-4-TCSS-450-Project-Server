@@ -44,7 +44,7 @@ router.get("/:Username?", (request, response) => {
                 })
             } else {
                 response.status(404).send({
-                    message: "username not found!!!!!"
+                    message: "username not found!!!!!" + $1
                 })
             }
         })
