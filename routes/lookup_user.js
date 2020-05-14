@@ -32,7 +32,7 @@ router.use(bodyParser.json())
  */ 
 router.get("/:Username?", (request, response) => {
 
-    const theQuery = 'SELECT FirstName, LastName, Username FROM Members WHERE Username LIKE $1'
+    const theQuery = "SELECT FirstName, LastName, Username FROM Members WHERE Username LIKE 'E%'"
     let values = [request.params.name]
 
     pool.query(theQuery, values)
@@ -52,7 +52,7 @@ router.get("/:Username?", (request, response) => {
             //log the error
             // console.log(err.details)
             response.status(400).send({
-                message: err.detail + "!0"
+                message: err.detail + "!000"
             })
         })
 })
