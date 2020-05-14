@@ -32,7 +32,7 @@ router.use(bodyParser.json())
  */ 
 router.get("/:Username?", (request, response) => {
 
-    const theQuery = 'SELECT FirstName, LastName, Username FROM Members WHERE Username=$1'
+    const theQuery = 'SELECT FirstName, LastName, Username FROM Members WHERE Username LIKE Esalmo'
     let values = [request.params.name]
 
     pool.query(theQuery, values)
@@ -44,7 +44,7 @@ router.get("/:Username?", (request, response) => {
                 })
             } else {
                 response.status(404).send({
-                    message: "username not found!!!!!" + $1
+                    message: "username not found"
                 })
             }
         })
