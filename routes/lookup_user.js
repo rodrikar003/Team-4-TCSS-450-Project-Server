@@ -44,7 +44,7 @@ router.get("/", (request, response) => {
                 })
             } else {
                 response.status(404).send({
-                    message: request.decode
+                    message: "Username Not Found!"
                 })
             }
         })
