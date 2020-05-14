@@ -16,7 +16,7 @@ router.use(bodyParser.json())
  * @apiName GetContacts
  * @apiGroup Contacts
  * 
- * @apiParam {String} username (Optional) the name to look up. If no name provided, nothing is returned.
+ * @apiParam {String} Username (Optional) the name to look up. If no name provided, nothing is returned.
  * 
  * @apiSuccess {boolean} success true when the usernames are found.
  * @apiSuccess {Object[]} userinfo a List of the user's info in the contacts DB
@@ -34,7 +34,7 @@ router.get("/:Username?", (request, response) => {
 
     const theQuery = 'SELECT FirstName, LastName, Username FROM Members WHERE Username LIKE $1'
     let values = [request.params.Username]
-
+    console.log(request.decode)
     pool.query(theQuery, values)
         .then(result => {
             if (result.rowCount > 0) {
@@ -44,7 +44,7 @@ router.get("/:Username?", (request, response) => {
                 })
             } else {
                 response.status(404).send({
-                    message: "username not found!"
+                    message: "Username Not Found"
                 })
             }
         })
