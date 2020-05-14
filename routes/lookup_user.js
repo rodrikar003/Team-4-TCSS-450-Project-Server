@@ -30,10 +30,10 @@ router.use(bodyParser.json())
  * 
  * @apiUse JSONError
  */ 
-router.get("/:Username?", (request, response) => {
+router.get("/", (request, response) => {
 
     const theQuery = 'SELECT FirstName, LastName, Username FROM Members WHERE Username LIKE $1'
-    let values = [request.params.Username]
+    let values = [request.query.username]
     console.log(request.decode)
     pool.query(theQuery, values)
         .then(result => {
