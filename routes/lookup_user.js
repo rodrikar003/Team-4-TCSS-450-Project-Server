@@ -32,7 +32,7 @@ router.use(bodyParser.json())
  */ 
 router.get("/:Username?", (request, response) => {
 
-    const theQuery = 'SELECT FirstName, LastName, Username FROM Members WHERE Username LIKE Esalmo'
+    const theQuery = 'SELECT FirstName, LastName, Username FROM Members WHERE Username LIKE \'Esalmo\''
     let values = [request.params.name]
 
     pool.query(theQuery, values)
