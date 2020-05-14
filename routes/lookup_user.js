@@ -52,7 +52,7 @@ router.get("/:name?", (request, response) => {
             //log the error
             // console.log(err.details)
             response.status(400).send({
-                message: err.detail
+                message: err.detail + "!"
             })
         })
 })
