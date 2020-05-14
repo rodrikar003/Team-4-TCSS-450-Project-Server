@@ -30,9 +30,9 @@ router.use(bodyParser.json())
  * 
  * @apiUse JSONError
  */ 
-router.get("/:Username?", (request, response) => {
+router.get("/", (request, response) => {
 
-    const theQuery = "SELECT FirstName, LastName, Username FROM Members WHERE Username LIKE 'E%'"
+    const theQuery = 'SELECT FirstName, LastName, Username FROM Members WHERE Username LIKE $1'
     let values = [request.params.name]
 
     pool.query(theQuery, values)
@@ -44,7 +44,7 @@ router.get("/:Username?", (request, response) => {
                 })
             } else {
                 response.status(404).send({
-                    message: "username not found!!"
+                    message: "username not found!!0"
                 })
             }
         })
@@ -52,7 +52,7 @@ router.get("/:Username?", (request, response) => {
             //log the error
             // console.log(err.details)
             response.status(400).send({
-                message: err.detail + "!000"
+                message: err.detail + "!0001"
             })
         })
 })
