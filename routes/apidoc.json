@@ -5,6 +5,7 @@
     "title": "Team 4 API Doc",
     "url" : "https://team4-tcss450-project-server.herokuapp.com/",
     "order": [
-       "Auth"
+       "Auth",
+       "Contacts"
     ]
   }

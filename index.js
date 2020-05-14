@@ -11,6 +11,7 @@ app.use(bodyParser.json())
 
 app.use('/auth', require('./routes/login.js')) 
 app.use('/auth', require('./routes/register.js')) 
+app.use('/lookup_user', require('./routes/lookup_user.js')) 
 
 
 
