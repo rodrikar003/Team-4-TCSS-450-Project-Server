@@ -18,7 +18,7 @@ var router = express.Router()
  * @apiHeader {String} authorization JWT provided from Auth get
  * @apiParam {String} zipcode for any location
  * 
- * @apiSuccess {String} one time call for all weather information
+ * @apiSuccess {String} weather weather information retrieved
  * @apiDescription This end point is a pass through to the OpenWeatherMap API. 
  * All parameters will pass on to api.openweathermap.org/data/2.5/onecall.
  * See the <a href="https://openweathermap.org/api/one-call-api">openweathermap.org documentation</a>
