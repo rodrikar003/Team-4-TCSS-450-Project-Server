@@ -47,7 +47,7 @@ router.get('/', (request, response) => {
     const [email, theirPw] = credentials.split(':')
 
     if(email && theirPw) {
-        let theQuery = "SELECT Password, Salt FROM Members WHERE Email=$1"
+        let theQuery = "SELECT Password, Salt, MemberId FROM Members WHERE Email=$1"
         let values = [email]
         pool.query(theQuery, values)
             .then(result => { 
@@ -67,10 +67,14 @@ router.get('/', (request, response) => {
                 //Did our salted hash match their salted hash?
                 if (ourSaltedHash === theirSaltedHash ) {
                     //credentials match. get a new JWT
-                    let token = jwt.sign({username: email},
+                    let token = jwt.sign(
+                        {
+                            "email": email,
+                            memberid: result.rows[0].memberid
+                        },
                         config.secret,
                         { 
-                            expiresIn: '14 days' // expires in 24 hours
+                            expiresIn: '14 days' // expires in 14 days
                         }
                     )
                     //package and send the results
@@ -89,7 +93,7 @@ router.get('/', (request, response) => {
             .catch((err) => {
                 //log the error
                 //console.log(err.stack)
-                res.status(400).send({
+                response.status(400).send({
                     message: err.detail
                 })
             })
