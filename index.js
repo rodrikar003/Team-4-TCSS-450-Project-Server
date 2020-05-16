@@ -25,7 +25,7 @@ app.get("/wait", (request, response) => {
   response.send({
   message: "Thanks for waiting"
   });
-  }, 2000)
+  }, 5000)
  }) 
 
 /*
