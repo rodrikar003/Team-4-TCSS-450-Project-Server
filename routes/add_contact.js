@@ -46,7 +46,7 @@ router.post("/", (request, response) => {
                     .then(result => {
                     response.status(201).send({
                     success: true,
-                    message: "Inserted: " + result.rows[0]
+                    message: "Hey: " + result.rows[0]
                 })
             })
             .catch(err => {
