@@ -32,9 +32,9 @@ router.use(bodyParser.json())
  */ 
 router.post("/", (request, response) => {
 
-    if (request.body.memberId_A && request.body.memberId_b) {
-        const theQuery = "INSERT INTO Contacts(MemberID_A, MemberID_B) VALUES ($1, $2) RETURNING *"
-        const values = [request.body.memberId_A, request.body.memberId_b]
+    if (request.body.MemberID_A && request.body.MemberID_B) {
+        const theQuery = "INSERT INTO Contacts(MemberID_A, MemberID_B) VALUES ($1, $2)"
+        const values = [request.body.MemberID_A, request.body.MemberID_B]
 
         pool.query(theQuery, values)
             .then(result => {
