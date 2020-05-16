@@ -1184,7 +1184,7 @@ define({ "api": [
         ]
       }
     },
-    "description": "<p>This end point is a pass through to the OpenWeatherMap API. All parameters will pass on to api.openweathermap.org/data/2.5/onecall. See the <a href=\"https://openweathermap.org/api/one-call-api\">openweathermap.org documentation</a> for a list of optional paramerters and expected results. You do not need a Phish.net api key with this endpoint. Enjoy!</p>",
+    "description": "<p>This end point is a pass through to the OpenWeatherMap API. All parameters will pass on to api.openweathermap.org/data/2.5/onecall. See the <a href=\"https://openweathermap.org/api/one-call-api\">openweathermap.org documentation</a> for a list of optional paramerters and expected results. You do not need a OWM api key with this endpoint. Enjoy!</p>",
     "version": "0.0.0",
     "filename": "routes/weather.js",
     "groupTitle": "Weather",
