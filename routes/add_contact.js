@@ -63,7 +63,7 @@ router.post("/", (request, response) => {
                 }
             }) 
                 } else {
-                    response.status(201).send({
+                    response.status(400).send({
                         success: true,
                         message: "Friend Already Exists"
                     })
