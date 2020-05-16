@@ -23,7 +23,7 @@ var router = express.Router()
  * All parameters will pass on to api.openweathermap.org/data/2.5/onecall.
  * See the <a href="https://openweathermap.org/api/one-call-api">openweathermap.org documentation</a>
  * for a list of optional paramerters and expected results. You do not need a 
- * Phish.net api key with this endpoint. Enjoy!
+ * OWM api key with this endpoint. Enjoy!
  * 
  * @apiUse JSONError
  */ 
