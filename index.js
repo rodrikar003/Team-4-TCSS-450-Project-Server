@@ -13,6 +13,7 @@ app.use('/auth', require('./routes/login.js'))
 app.use('/auth', require('./routes/register.js')) 
 app.use('/lookup_user', require('./routes/lookup_user.js')) 
 app.use('/weather', require('./routes/weather.js'))
+app.use('/add_user', require('./routes/add_contacts.js'))
 
 
 
