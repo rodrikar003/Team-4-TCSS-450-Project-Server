@@ -32,12 +32,6 @@ router.use(bodyParser.json())
  */ 
 router.post("/", (request, response) => {
 
-    if (request.body.MemberID_A == request.body.MemberID_B) {
-        response.status(400).send({
-            message: "You cannot be friends with yourself..."
-        })
-    } else {
-
     if (request.body.MemberID_A && request.body.MemberID_B) {
         const theQuery = "INSERT INTO Contacts(MemberID_A, MemberID_B) VALUES ($1, $2)"
         const values = [request.body.MemberID_A, request.body.MemberID_B]
@@ -67,8 +61,7 @@ router.post("/", (request, response) => {
         response.status(400).send({
             message: "Missing required information!"
         })
-    }
-}    
+    }    
 })
 
 module.exports = router
