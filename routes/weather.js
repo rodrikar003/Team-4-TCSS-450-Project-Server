@@ -44,7 +44,7 @@ router.get("/", (req, res) => {
     let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely&appid=${API_KEY}` 
    
 
-    // //When this web service gets a request, make a request to the weather Web service
+    //When this web service gets a request, make a request to the weather Web service
     request(url, function (error, response, body) {
         if (error) {
             res.send(error)
