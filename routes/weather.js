@@ -41,7 +41,7 @@ router.get("/", (req, res) => {
     var lat = parseFloat(location.latitude)
     var lon = parseFloat(location.longitude)
     // openweathermap endpoint
-    let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely&appid=${API_KEY}` 
+    let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely&appid=${API_KEY}&units=imperial` 
    
 
     //When this web service gets a request, make a request to the weather Web service
