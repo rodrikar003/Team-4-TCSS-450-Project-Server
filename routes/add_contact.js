@@ -59,7 +59,7 @@ router.post("/", (request, response) => {
             
     } else {
         response.status(400).send({
-            message: "Missing required information"
+            message: "Missing required information!"
         })
     }    
 })
