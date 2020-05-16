@@ -25,7 +25,7 @@ let msg_functions = require('../utilities/utils').messaging
  * 
  * @apiHeader {String} authorization Valid JSON Web Token JWT
  * 
- * @apiParam {Number} chatId the id of th chat to insert this message into
+ * @apiParam {Number} chatId the id of the chat to insert this message into
  * @apiParam {String} message a message to store 
  * 
  * @apiSuccess (Success 201) {boolean} success true when the name is inserted
