@@ -62,11 +62,11 @@ router.post("/", (request, response) => {
                     })
                 }
             }) 
+                } else {
+                    response.status(400).send({
+                        message: "Friend Already Exisits"
                 }
-                response.status(201).send({
-                    success: true,
-                    message: "Inserted!!!: " + result.rows[0]
-                })
+                
             })
             .catch(err => {
                 //log the error
