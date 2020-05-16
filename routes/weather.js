@@ -25,11 +25,11 @@ var router = express.Router()
  * for a list of optional paramerters and expected results. You do not need a 
  * OWM api key with this endpoint. Enjoy!
  * 
+ * @apiError (400: Invalid Zipcode) {String} message "Invalid Zipcode"
  * @apiUse JSONError
  */ 
 router.get("/", (req, res) => {
-    var zipcode = req.query.zipcode
-    var location = zipcodes.lookup(zipcode);
+    
 //lookup will return an object like this:
         // { zip: '90210',
         //   latitude: 34.088808,
@@ -37,9 +37,18 @@ router.get("/", (req, res) => {
         //   city: 'Beverly Hills',
         //   state: 'CA',
         //   country: 'US' }
+var zipcode = req.query.zipcode  
+var location      
+try{
+    location = zipcodes.lookup(zipcode);
+} catch {
+    response.status(400).send({
+        message: err.detail
+    })
+}
 // parse result to float
-    var lat = parseFloat(location.latitude)
-    var lon = parseFloat(location.longitude)
+var lat = parseFloat(location.latitude)
+var lon = parseFloat(location.longitude)
     // openweathermap endpoint
     let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely&appid=${API_KEY}&units=imperial` 
    
