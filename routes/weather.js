@@ -23,13 +23,13 @@ var router = express.Router()
  * All parameters will pass on to api.openweathermap.org/data/2.5/onecall.
  * See the <a href="https://openweathermap.org/api/one-call-api">openweathermap.org documentation</a>
  * for a list of optional paramerters and expected results. You do not need a 
- * Phish.net api key with this endpoint. Enjoy!
+ * OWM api key with this endpoint. Enjoy!
  * 
+ * @apiError (400: Invalid Zipcode) {String} message "Invalid Zipcode"
  * @apiUse JSONError
  */ 
 router.get("/", (req, res) => {
-    var zipcode = req.query.zipcode
-    var location = zipcodes.lookup(zipcode);
+    
 //lookup will return an object like this:
         // { zip: '90210',
         //   latitude: 34.088808,
@@ -37,14 +37,23 @@ router.get("/", (req, res) => {
         //   city: 'Beverly Hills',
         //   state: 'CA',
         //   country: 'US' }
+var zipcode = req.query.zipcode  
+var location      
+try{
+    location = zipcodes.lookup(zipcode);
+} catch {
+    response.status(400).send({
+        message: err.detail
+    })
+}
 // parse result to float
-    var lat = parseFloat(location.latitude)
-    var lon = parseFloat(location.longitude)
+var lat = parseFloat(location.latitude)
+var lon = parseFloat(location.longitude)
     // openweathermap endpoint
-    let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely&appid=${API_KEY}` 
+    let url = `https://api.openweathermap.org/data/2.5/onecall?lat=${lat}&lon=${lon}&exclude=minutely&appid=${API_KEY}&units=imperial` 
    
 
-    // //When this web service gets a request, make a request to the weather Web service
+    //When this web service gets a request, make a request to the weather Web service
     request(url, function (error, response, body) {
         if (error) {
             res.send(error)

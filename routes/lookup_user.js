@@ -12,7 +12,7 @@ const bodyParser = require("body-parser")
 router.use(bodyParser.json())
 
 /**
- * @api {get} /lookup_users/:Username? Request to get all users with the given username/nickname
+ * @api {get} /lookup_user/ Request to get all users with the given username/nickname
  * @apiName GetContacts
  * @apiGroup Contacts
  * 
@@ -32,7 +32,7 @@ router.use(bodyParser.json())
  */ 
 router.get("/", (request, response) => {
 
-    const theQuery = 'SELECT FirstName, LastName, Username FROM Members WHERE Username LIKE $1'
+    const theQuery = 'SELECT FirstName, LastName, Username, MemberId FROM Members WHERE Username LIKE $1'
     let values = [request.query.username]
     console.log(request.decode)
     pool.query(theQuery, values)
