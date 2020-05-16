@@ -33,12 +33,18 @@ router.use(bodyParser.json())
 router.post("/", (request, response) => {
 
     if (request.body.MemberID_A && request.body.MemberID_B) {
+        const theQueryCheck = "SELECT * FROM Contacts WHERE MemberID_A = $1 AND MemberID_B = $2"
+
+
         const theQuery = "INSERT INTO Contacts(MemberID_A, MemberID_B) VALUES ($1, $2)"
         const values = [request.body.MemberID_A, request.body.MemberID_B]
 
-        pool.query(theQuery, values)
+        pool.query(theQueryCheck, values)
             .then(result => {
-                response.status(201).send({
+                if (result.rowCount == 0) {
+                    pool.query(theQuery, values)
+                    .then(result => {
+                    response.status(201).send({
                     success: true,
                     message: "Inserted: " + result.rows[0]
                 })
@@ -56,6 +62,27 @@ router.post("/", (request, response) => {
                     })
                 }
             }) 
+                }
+                response.status(201).send({
+                    success: true,
+                    message: "Inserted: " + result.rows[0]
+                })
+            })
+            .catch(err => {
+                //log the error
+                console.log(err)
+                if (err.constraint == "demo_name_key") {
+                    response.status(400).send({
+                        message: "Name exists"
+                    })
+                } else {
+                    response.status(400).send({
+                        message: err.detail
+                    })
+                }
+            })
+
+        
             
     } else {
         response.status(400).send({
