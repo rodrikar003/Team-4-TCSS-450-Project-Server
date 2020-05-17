@@ -33,7 +33,7 @@ router.use(bodyParser.json())
 router.get("/", (request, response) => {
 
     //const theQuery = 'SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1'
-    const theQuery = 'SELECT FirstName, LastName, Username FROM Contacts AS c RIGHT JOIN Members AS m ON c.MemberID_B = m.MemberID_B WHERE MemberID_A = $1'
+    const theQuery = 'SELECT FirstName, LastName, Username FROM Contacts RIGHT JOIN Members ON Contacts.MemberID_B = Members.MemberId WHERE MemberID_A = $1'
     
     let values = [request.query.memberid]
     
