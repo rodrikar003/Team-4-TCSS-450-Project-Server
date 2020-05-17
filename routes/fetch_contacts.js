@@ -42,7 +42,7 @@ router.get("/", (request, response) => {
             if (result.rowCount > 0) {
                 response.send({
                     success: true,
-                    names: result.rows
+                    results: result.rows
                 })
             } else {
                 response.status(404).send({
