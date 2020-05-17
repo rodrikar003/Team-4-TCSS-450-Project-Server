@@ -32,7 +32,8 @@ router.use(bodyParser.json())
  */ 
 router.get("/", (request, response) => {
 
-    const theQuery = 'SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1'
+    const theQuery = 'SELECT MemberID_B FROM Contacts, Members WHERE MemberID_A = $1'
+    
     let values = [request.query.memberid]
     
     pool.query(theQuery, values)
