@@ -314,7 +314,7 @@ router.get("/:memberId", (request, response, next) => {
         })
     }, (request, response) => {
         //Retrieve the members
-        let query = `SELECT DISTINT chatId FROM chats WHERE memberid=$1`
+        let query = `SELECT DISTINT chatId FROM chatmembers WHERE memberid=$1`
         let values = [request.params.memberId]
         pool.query(query, values)
             .then(result => {
