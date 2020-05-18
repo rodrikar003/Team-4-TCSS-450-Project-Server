@@ -11,6 +11,8 @@ let getHash = require('../utilities/utils').getHash
 
 let sendEmail = require('../utilities/utils').sendEmail
 
+let validateRegistration = require('../utilities/utils').validateRegistration
+
 var router = express.Router()
 
 const bodyParser = require("body-parser")
@@ -42,55 +44,85 @@ router.use(bodyParser.json())
 router.post('/', (req, res) => {
     res.type("application/json")
 
+    // constants for generating a random six digit verification code
+    const min = 100000
+    const max = 1000000
+
     //Retrieve data from query params
     var first = req.body.first
     var last = req.body.last
     var username = req.body.username 
     var email = req.body.email
     var password = req.body.password
-    var verification = req.body.verification
+    var verified = req.body.verified
+    var verification = Math.random() * (max - min) + min;
     //Verify that the caller supplied all the parameters
     //In js, empty strings or null values evaluate to false
     if(first && last && username && email && password && verification) {
-        //We're storing salted hashes to make our application more secure
-        //If you're interested as to what that is, and why we should use it
-        //watch this youtube video: https://www.youtube.com/watch?v=8ZtInClXe1Q
+        if(validateRegistration(email, password)) {
+            //We're storing salted hashes to make our application more secure
+            //If you're interested as to what that is, and why we should use it
+            //watch this youtube video: https://www.youtube.com/watch?v=8ZtInClXe1Q
+            let salt = crypto.randomBytes(32).toString("hex")
+            let salted_hash = getHash(password, salt)
+            
+            //We're using placeholders ($1, $2, $3) in the SQL query string to avoid SQL Injection
+            //If you want to read more: https://stackoverflow.com/a/8265319
+            let theQuery = "INSERT INTO MEMBERS(FirstName, LastName, Username, Email, Password, Salt) VALUES ($1, $2, $3, $4, $5, $6) RETURNING Email"
+            let values = [first, last, username, email, salted_hash, salt]
+            pool.query(theQuery, values)
+                .then(result => {
+                    //We successfully added the user, let the user know
+                    res.status(201).send({
+                        success: true,
+                        email: result.rows[0].email,
+                        verify: verification
+                    })
+                    sendEmail("uwnetid@uw.edu", email, verification, "<strong>Welcome to our app!</strong>");
+                
+                    ///// email Verification
+
+                })
+                .catch((err) => {
+                    //log the error
+                    //console.log(err)
+                    if (err.constraint == "members_username_key") {
+                        res.status(400).send({
+                            message: "Username exists"
+                        })
+                    } else if (err.constraint == "members_email_key") {
+                        res.status(400).send({
+                            message: "Email exists"
+                        })
+                    } else {
+                        res.status(400).send({
+                            message: err.detail
+                        })
+                    }
+                })
+        } else {
+            response.status(400).send({
+                message: "invalid registration information"
+            })
+        }
+        
+    } else if(email, verified) {
+        // verify the user in the database
+        let values = [email]
+        let query = "UPDATE Members SET Verification = true WHERE Email = VALUES ($1)" // true or whatever the "verified" value is
+    } else if(email, password) {
+        // set this as the user's new password in the database
         let salt = crypto.randomBytes(32).toString("hex")
         let salted_hash = getHash(password, salt)
-        
-        //We're using placeholders ($1, $2, $3) in the SQL query string to avoid SQL Injection
-        //If you want to read more: https://stackoverflow.com/a/8265319
-        let theQuery = "INSERT INTO MEMBERS(FirstName, LastName, Username, Email, Password, Salt) VALUES ($1, $2, $3, $4, $5, $6) RETURNING Email"
-        let values = [first, last, username, email, salted_hash, salt]
-        pool.query(theQuery, values)
-            .then(result => {
-                //We successfully added the user, let the user know
-                res.status(201).send({
-                    success: true,
-                    email: result.rows[0].email
+        let values = [salted_hash, salt, email]
+        let query = "UPDATE Members SET Password, Salt VALUES ($1, $2) WHERE Email = VALUES ($3)" // check that this is a valid SQL statement
+        pool.query(query, values)
+                .then(result => {
+                    //We successfully reset the user's password
+                    res.status(201).send({
+                        success: true
+                    })                
                 })
-                sendEmail("uwnetid@uw.edu", email, verification, "<strong>Welcome to our app!</strong>");
-               
-                ///// email Verification
-
-            })
-            .catch((err) => {
-                //log the error
-                //console.log(err)
-                if (err.constraint == "members_username_key") {
-                    res.status(400).send({
-                        message: "Username exists"
-                    })
-                } else if (err.constraint == "members_email_key") {
-                    res.status(400).send({
-                        message: "Email exists"
-                    })
-                } else {
-                    res.status(400).send({
-                        message: err.detail
-                    })
-                }
-            })
     } else {
         response.status(400).send({
             message: "Missing required information"

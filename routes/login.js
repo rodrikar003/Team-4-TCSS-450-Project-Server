@@ -47,7 +47,7 @@ router.get('/', (request, response) => {
     const [email, theirPw] = credentials.split(':')
 
     if(email && theirPw) {
-        let theQuery = "SELECT Password, Salt FROM Members WHERE Email=$1"
+        let theQuery = "SELECT Password, Salt, Verification FROM Members WHERE Email=$1"
         let values = [email]
         pool.query(theQuery, values)
             .then(result => { 
@@ -63,6 +63,11 @@ router.get('/', (request, response) => {
 
                 //Combined their password with our salt, then hash
                 let theirSaltedHash = getHash(theirPw, salt)
+                
+                // retrieve the users verification status
+                let verified = result.rows[0].verification 
+
+                console.log(verified)
 
                 //Did our salted hash match their salted hash?
                 if (ourSaltedHash === theirSaltedHash ) {
@@ -77,7 +82,8 @@ router.get('/', (request, response) => {
                     response.json({
                         success: true,
                         message: 'Authentication successful!',
-                        token: token
+                        token: token,
+                        verification: verified
                     })
                 } else {
                     //credentials dod not match
@@ -89,7 +95,7 @@ router.get('/', (request, response) => {
             .catch((err) => {
                 //log the error
                 //console.log(err.stack)
-                res.status(400).send({
+                response.status(400).send({
                     message: err.detail
                 })
             })

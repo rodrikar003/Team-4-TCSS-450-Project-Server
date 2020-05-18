@@ -38,6 +38,23 @@ function sendEmail(from, receiver, verification, message) {
 }
 
 /**
+ * Method to validate the registration credentials 
+ * of a new user. Email is  checked to contain '@'
+ * and password is checked for length and various characters.
+ * returns true if all requirements are met, otherwise false.
+ * @param {String} email 
+ * @param {String} pass 
+ */
+function validateRegistration(email, pass) {
+  var specialChars = new RegExp(/[~`!#$%\^&*+=\-\[\]\\';,/{}|\\":<>\?]/);
+  var digits = new RegExp(/1234567890/);
+  var space = new RegExp(/ /);
+  var lowers = new RegExp(/a-z/);
+  var uppers = new RegExp(/A-Z/);
+  return (email.includes('@') && pass.length >= 7 && pass.test(specialChars) && pass.test(digits) && !pass.test(space) && pass.test(lowers) && pass.test(uppers))
+}
+
+/**
  * Method to get a salted hash.
  * We put this in its own method to keep consistency
  * @param {string} pw the password to hash
