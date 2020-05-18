@@ -12,11 +12,11 @@ const bodyParser = require("body-parser")
 router.use(bodyParser.json())
 
 /**
- * @api {get} /lookup_users/:username? Request to get all users with the given username/nickname
+ * @api {get} /lookup_user/ Request to get all users with the given username/nickname
  * @apiName GetContacts
  * @apiGroup Contacts
  * 
- * @apiParam {String} username (Optional) the name to look up. If no name provided, nothing is returned.
+ * @apiParam {String} Username (Optional) the name to look up. If no name provided, nothing is returned.
  * 
  * @apiSuccess {boolean} success true when the usernames are found.
  * @apiSuccess {Object[]} userinfo a List of the user's info in the contacts DB
@@ -32,9 +32,9 @@ router.use(bodyParser.json())
  */ 
 router.get("/", (request, response) => {
 
-    const theQuery = 'SELECT FirstName, LastName, Username FROM Members WHERE Username LIKE $1'
-    let values = [request.params.name]
-
+    const theQuery = 'SELECT FirstName, LastName, Username, MemberId FROM Members WHERE Username LIKE $1'
+    let values = [request.query.username]
+    console.log(request.decode)
     pool.query(theQuery, values)
         .then(result => {
             if (result.rowCount > 0) {
@@ -44,7 +44,7 @@ router.get("/", (request, response) => {
                 })
             } else {
                 response.status(404).send({
-                    message: "username not found!!0"
+                    message: "Username Not Found!"
                 })
             }
         })
@@ -52,7 +52,7 @@ router.get("/", (request, response) => {
             //log the error
             // console.log(err.details)
             response.status(400).send({
-                message: err.detail + "!0001"
+                message: err.detail
             })
         })
 })

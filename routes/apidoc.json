@@ -6,6 +6,9 @@
     "url" : "https://team4-tcss450-project-server.herokuapp.com/",
     "order": [
        "Auth",
-       "Contacts"
+       "Contacts",
+       "Messages",
+       "Chats",
+       "Weather"
     ]
   }

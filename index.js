@@ -12,8 +12,23 @@ app.use(bodyParser.json())
 app.use('/auth', require('./routes/login.js')) 
 app.use('/auth', require('./routes/register.js')) 
 app.use('/lookup_user', require('./routes/lookup_user.js')) 
+app.use('/weather', require('./routes/weather.js'))
+app.use('/add_user', require('./routes/add_contact.js'))
+app.use('/fetch_contact', require('./routes/fetch_contacts.js'))
+app.use('/delete_contact', require('./routes/deleteContacts.js'))
+app.use('/messages', middleware.checkToken, require('./routes/messages.js'))
+app.use('/chats', middleware.checkToken, require('./routes/chats.js'))
+app.use('/auth', middleware.checkToken, require('./routes/pushyregister.js'))
 
 
+
+app.get("/wait", (request, response) => {
+  setTimeout(() => {
+  response.send({
+  message: "Thanks for waiting"
+  });
+  }, 5000)
+ }) 
 
 /*
  * This middleware function will respond to inproperly formed JSON in 
@@ -59,3 +74,5 @@ app.get("/", (request, response) => {
 app.listen(process.env.PORT || 5000, () => {
     console.log("Server up and running on port: " + (process.env.PORT || 5000));
 });
+
+
