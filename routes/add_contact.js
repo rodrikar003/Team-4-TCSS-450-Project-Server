@@ -12,7 +12,7 @@ const bodyParser = require("body-parser")
 router.use(bodyParser.json())
 
 /**
- * @api {post} /addContact adds two contacts together
+ * @api {post} /add_user adds two contacts together
  * @apiName GetContacts
  * @apiGroup Contacts
  * 
@@ -22,7 +22,7 @@ router.use(bodyParser.json())
  * @apiSuccess (Success 201) {boolean} success true when the MemberId is inserted
  * @apiSuccess (Success 201) {String} message the inserted MemberId
  * 
- * @apiError (400: Name exists) {String} message "Already friends"
+ * @apiError (400: Name exists) {String} message "Friend Already Exists"
  * 
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
  * 
@@ -52,15 +52,9 @@ router.post("/", (request, response) => {
             .catch(err => {
                 //log the error
                 console.log(err)
-                if (err.constraint == "demo_name_key") {
-                    response.status(400).send({
-                        message: "Name exists"
-                    })
-                } else {
                     response.status(400).send({
                         message: err.detail
                     })
-                }
             }) 
                 } else {
                     response.status(400).send({
@@ -73,15 +67,11 @@ router.post("/", (request, response) => {
             .catch(err => {
                 //log the error
                 console.log(err)
-                if (err.constraint == "demo_name_key") {
-                    response.status(400).send({
-                        message: "Name exists"
-                    })
-                } else {
+                
                     response.status(400).send({
                         message: err.detail
                     })
-                }
+                
             })
 
         

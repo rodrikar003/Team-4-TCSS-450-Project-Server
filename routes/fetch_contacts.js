@@ -12,19 +12,16 @@ const bodyParser = require("body-parser")
 router.use(bodyParser.json())
 
 /**
- * @api {get} /lookup_user/ Request to get all users with the given username/nickname
- * @apiName GetContacts
- * @apiGroup Contacts
+ * @api {get} /fetch_contact/ Request to get all of the user's contacts
+ * @apiName GetUserContacts
+ * @apiGroup UserContacts
  * 
- * @apiParam {String} Username (Optional) the name to look up. If no name provided, nothing is returned.
+ * @apiParam {String} MemberId (Optional) the user's memberId to fetch of their contacts. If no memberId provided, nothing is returned.
  * 
- * @apiSuccess {boolean} success true when the usernames are found.
- * @apiSuccess {Object[]} userinfo a List of the user's info in the contacts DB
- * @apiSuccess {String} userinfo.firstName The first name
- * @apiSuccess {String} userinfo.lastname The last name
- * @apiSuccess {String} userinfo.username The username associated with the account
+ * @apiSuccess {boolean} success true when the contacts are found.
+ * @apiSuccess {Object[]} a List of the user's contacts information.
  * 
- * @apiError (404: username Not Found) {String} message "username not found"
+ * @apiError (404: username Not Found) {String} message "No Contacts were found"
 
  * @apiError (400: SQL Error) {String} message the reported SQL error details
  * 
@@ -32,7 +29,6 @@ router.use(bodyParser.json())
  */ 
 router.get("/", (request, response) => {
 
-    //const theQuery = 'SELECT MemberID_B FROM Contacts WHERE MemberID_A = $1'
     const theQuery = 'SELECT FirstName, LastName, Username, MemberId, Contacts.primaryKey FROM Contacts RIGHT JOIN Members ON Contacts.MemberID_B = Members.MemberId WHERE MemberID_A = $1'
     
     let values = [request.query.memberid]
@@ -46,13 +42,11 @@ router.get("/", (request, response) => {
                 })
             } else {
                 response.status(404).send({
-                    message: "Username Not Found!"
+                    message: "No Contacts"
                 })
             }
         })
         .catch(err => {
-            //log the error
-            // console.log(err.details)
             response.status(400).send({
                 message: err.detail
             })
