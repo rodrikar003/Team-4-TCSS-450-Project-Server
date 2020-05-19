@@ -107,6 +107,7 @@ router.post('/', (req, res) => {
         }
         
     } else if(email, verified) {
+        sendEmail("uwnetid@uw.edu", email, verification, "<strong>Welcome to our app!</strong>")
         // verify the user in the database
         let values = [email]
         let query = "UPDATE Members SET Verification = 1 WHERE Email =  $1" 
@@ -114,7 +115,8 @@ router.post('/', (req, res) => {
                 .then(result => {
                     //We successfully reset the user's password
                     res.status(201).send({
-                        success: true
+                        success: true,
+                        verification: verification
                     })                
                 })
     } else if(email, password) {
