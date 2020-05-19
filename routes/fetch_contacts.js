@@ -14,7 +14,7 @@ router.use(bodyParser.json())
 /**
  * @api {get} /fetch_contact/ Request to get all of the user's contacts
  * @apiName GetUserContacts
- * @apiGroup Contacts
+ * @apiGroup UserContacts
  * 
  * @apiParam {String} MemberId (Optional) the user's memberId to fetch of their contacts. If no memberId provided, nothing is returned.
  * 

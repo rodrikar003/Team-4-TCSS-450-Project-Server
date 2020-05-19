@@ -7,8 +7,6 @@ define({
   "order": [
     "Auth",
     "Contacts",
-    "UserContacts",
-    "DeleteContacts",
     "Messages",
     "Chats",
     "Weather"
@@ -18,7 +16,7 @@ define({
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2020-05-19T19:20:03.225Z",
+    "time": "2020-05-19T19:22:01.879Z",
     "url": "http://apidocjs.com",
     "version": "0.22.1"
   }
