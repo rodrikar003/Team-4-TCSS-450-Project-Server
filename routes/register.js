@@ -131,6 +131,7 @@ router.post('/', (req, res) => {
         let values = [salted_hash, salt, email]
         console.log("attempting to add new password")
         let query = "UPDATE Members SET Password = $1, Salt = $2 WHERE Email = $3"
+        pool.query(query, values)
                 .then(result => {
                     //We successfully reset the user's password
                     res.status(201).send({
