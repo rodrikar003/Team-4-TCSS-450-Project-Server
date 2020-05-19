@@ -67,8 +67,6 @@ router.get('/', (request, response) => {
                 // retrieve the users verification status
                 let verified = result.rows[0].verification 
 
-                console.log(verified)
-
                 //Did our salted hash match their salted hash?
                 if (ourSaltedHash === theirSaltedHash ) {
                     //credentials match. get a new JWT

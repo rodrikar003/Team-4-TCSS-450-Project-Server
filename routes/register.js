@@ -77,11 +77,9 @@ router.post('/', (req, res) => {
                         success: true,
                         email: result.rows[0].email,
                         verification: verification
-                    })
-                    sendEmail("uwnetid@uw.edu", email, verification, "<strong>Welcome to our app!</strong>");
-                
+                    })                
                     ///// email Verification
-
+                    // handled below now
                 })
                 .catch((err) => {
                     //log the error
@@ -131,6 +129,7 @@ router.post('/', (req, res) => {
         let salt = crypto.randomBytes(32).toString("hex")
         let salted_hash = getHash(password, salt)
         let values = [salted_hash, salt, email]
+        console.log("attempting to add new password")
         let query = "UPDATE Members SET Password, Salt VALUES ($1, $2) WHERE Email = $3" // check that this is a valid SQL statement
         pool.query(query, values)
                 .then(result => {
