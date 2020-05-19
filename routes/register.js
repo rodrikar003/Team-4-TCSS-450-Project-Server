@@ -130,7 +130,7 @@ router.post('/', (req, res) => {
         let salted_hash = getHash(password, salt)
         let values = [salted_hash, salt, email]
         console.log("attempting to add new password")
-        let query = "UPDATE Members SET Password, Salt VALUES ($1, $2) WHERE Email = $3" // check that this is a valid SQL statement
+        let query = "UPDATE Members SET (Password, Salt) VALUES ($1, $2) WHERE Email = $3" // check that this is a valid SQL statement
         pool.query(query, values)
                 .then(result => {
                     //We successfully reset the user's password
