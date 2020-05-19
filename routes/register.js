@@ -55,7 +55,7 @@ router.post('/', (req, res) => {
     var email = req.body.email
     var password = req.body.password
     var verified = req.body.verified
-    var verification = Math.random() * (max - min) + min;
+    var verification = Math.floor(Math.random() * (max - min) + min);
     //Verify that the caller supplied all the parameters
     //In js, empty strings or null values evaluate to false
     if(first && last && username && email && password && verification) {
