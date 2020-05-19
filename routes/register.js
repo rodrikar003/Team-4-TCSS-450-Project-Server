@@ -76,7 +76,7 @@ router.post('/', (req, res) => {
                     res.status(201).send({
                         success: true,
                         email: result.rows[0].email,
-                        verify: verification
+                        verification: verification
                     })
                     sendEmail("uwnetid@uw.edu", email, verification, "<strong>Welcome to our app!</strong>");
                 
@@ -107,8 +107,14 @@ router.post('/', (req, res) => {
         }
         
     } else if(email, verified) {
-        sendEmail("uwnetid@uw.edu", email, verification, "<strong>Welcome to our app!</strong>")
-        // verify the user in the database
+        if(verified == 'false') {
+            sendEmail("uwnetid@uw.edu", email, verification, "<strong>Welcome to our app!</strong>")
+            res.status(201).send({
+                success: true,
+                verification: verification
+            })    
+        } else {
+            // verify the user in the database
         let values = [email]
         let query = "UPDATE Members SET Verification = 1 WHERE Email =  $1" 
         pool.query(query, values)
@@ -119,6 +125,7 @@ router.post('/', (req, res) => {
                         verification: verification
                     })                
                 })
+        }
     } else if(email, password) {
         // set this as the user's new password in the database
         let salt = crypto.randomBytes(32).toString("hex")
