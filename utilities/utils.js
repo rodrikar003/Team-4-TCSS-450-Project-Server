@@ -17,12 +17,12 @@ function sendEmail(from, receiver, verification, message) {
   var transporter = nodemailer.createTransport({
     service: 'gmail',
     auth: {
-      user: 'group4noreply@gmail.com',
+      user: 'bananaphone.noreply@gmail.com',
       pass: 'Coolpassword1!'
     }
   });
   var mailOptions = {
-    from: 'group4noreply@gmail.com',
+    from: 'bananaphone.noreply@gmail.com',
     to: receiver,
     subject: 'Registration Verification',
     text: 'Your verification code is: ' + verification

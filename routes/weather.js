@@ -37,15 +37,17 @@ router.get("/", (req, res) => {
         //   city: 'Beverly Hills',
         //   state: 'CA',
         //   country: 'US' }
+        
+
 var zipcode = req.query.zipcode  
 var location      
-try{
-    location = zipcodes.lookup(zipcode);
-} catch {
-    response.status(400).send({
-        message: err.detail
-    })
+location = zipcodes.lookup(zipcode);
+
+if (typeof location === 'undefined') {
+    res.status(400).send({
+        message: "Invalid Zipcode"})
 }
+
 // parse result to float
 var lat = parseFloat(location.latitude)
 var lon = parseFloat(location.longitude)

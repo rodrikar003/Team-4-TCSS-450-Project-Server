@@ -109,13 +109,20 @@ router.post('/', (req, res) => {
     } else if(email, verified) {
         // verify the user in the database
         let values = [email]
-        let query = "UPDATE Members SET Verification = true WHERE Email = VALUES ($1)" // true or whatever the "verified" value is
+        let query = "UPDATE Members SET Verification = 1 WHERE Email =  $1" 
+        pool.query(query, values)
+                .then(result => {
+                    //We successfully reset the user's password
+                    res.status(201).send({
+                        success: true
+                    })                
+                })
     } else if(email, password) {
         // set this as the user's new password in the database
         let salt = crypto.randomBytes(32).toString("hex")
         let salted_hash = getHash(password, salt)
         let values = [salted_hash, salt, email]
-        let query = "UPDATE Members SET Password, Salt VALUES ($1, $2) WHERE Email = VALUES ($3)" // check that this is a valid SQL statement
+        let query = "UPDATE Members SET Password, Salt VALUES ($1, $2) WHERE Email = $3" // check that this is a valid SQL statement
         pool.query(query, values)
                 .then(result => {
                     //We successfully reset the user's password
