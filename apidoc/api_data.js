@@ -811,8 +811,98 @@ define({ "api": [
     "groupTitle": "Chats"
   },
   {
+    "type": "post",
+    "url": "/addContact",
+    "title": "adds two contacts together",
+    "name": "GetContacts",
+    "group": "Contacts",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "MemberID_A",
+            "description": "<p>first person's id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "MemberID_B",
+            "description": "<p>second person's id</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 201": [
+          {
+            "group": "Success 201",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the MemberId is inserted</p>"
+          },
+          {
+            "group": "Success 201",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the inserted MemberId</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Name exists": [
+          {
+            "group": "400: Name exists",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Already friends&quot;</p>"
+          }
+        ],
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/add_contact.js",
+    "groupTitle": "Contacts"
+  },
+  {
     "type": "get",
-    "url": "/lookup_users/:Username?",
+    "url": "/lookup_user/",
     "title": "Request to get all users with the given username/nickname",
     "name": "GetContacts",
     "group": "Contacts",
@@ -1185,11 +1275,17 @@ define({ "api": [
       }
     },
     "description": "<p>This end point is a pass through to the OpenWeatherMap API. All parameters will pass on to api.openweathermap.org/data/2.5/onecall. See the <a href=\"https://openweathermap.org/api/one-call-api\">openweathermap.org documentation</a> for a list of optional paramerters and expected results. You do not need a OWM api key with this endpoint. Enjoy!</p>",
-    "version": "0.0.0",
-    "filename": "routes/weather.js",
-    "groupTitle": "Weather",
     "error": {
       "fields": {
+        "400: Invalid Zipcode": [
+          {
+            "group": "400: Invalid Zipcode",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Invalid Zipcode&quot;</p>"
+          }
+        ],
         "400: JSON Error": [
           {
             "group": "400: JSON Error",
@@ -1200,6 +1296,9 @@ define({ "api": [
           }
         ]
       }
-    }
+    },
+    "version": "0.0.0",
+    "filename": "routes/weather.js",
+    "groupTitle": "Weather"
   }
 ] });

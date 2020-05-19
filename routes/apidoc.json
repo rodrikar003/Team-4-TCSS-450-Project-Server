@@ -7,6 +7,8 @@
     "order": [
        "Auth",
        "Contacts",
+       "UserContacts",
+       "DeleteContacts",
        "Messages",
        "Chats",
        "Weather"
