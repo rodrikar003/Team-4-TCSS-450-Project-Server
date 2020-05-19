@@ -1000,7 +1000,7 @@ define({ "api": [
     "url": "/delete_contact",
     "title": "deletes an existing contact",
     "name": "GetDeleteContacts",
-    "group": "Contacts",
+    "group": "DeleteContacts",
     "parameter": {
       "fields": {
         "Parameter": [
@@ -1069,81 +1069,7 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "routes/deleteContacts.js",
-    "groupTitle": "Contacts"
-  },
-  {
-    "type": "get",
-    "url": "/fetch_contact/",
-    "title": "Request to get all of the user's contacts",
-    "name": "GetUserContacts",
-    "group": "Contacts",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "MemberId",
-            "description": "<p>(Optional) the user's memberId to fetch of their contacts. If no memberId provided, nothing is returned.</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 200": [
-          {
-            "group": "Success 200",
-            "type": "boolean",
-            "optional": false,
-            "field": "success",
-            "description": "<p>true when the contacts are found.</p>"
-          },
-          {
-            "group": "Success 200",
-            "type": "Object[]",
-            "optional": false,
-            "field": "a",
-            "description": "<p>List of the user's contacts information.</p>"
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "404: username Not Found": [
-          {
-            "group": "404: username Not Found",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;No Contacts were found&quot;</p>"
-          }
-        ],
-        "400: SQL Error": [
-          {
-            "group": "400: SQL Error",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>the reported SQL error details</p>"
-          }
-        ],
-        "400: JSON Error": [
-          {
-            "group": "400: JSON Error",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "routes/fetch_contacts.js",
-    "groupTitle": "Contacts"
+    "groupTitle": "DeleteContacts"
   },
   {
     "type": "get",
@@ -1378,6 +1304,80 @@ define({ "api": [
     "version": "0.0.0",
     "filename": "routes/messages.js",
     "groupTitle": "Messages"
+  },
+  {
+    "type": "get",
+    "url": "/fetch_contact/",
+    "title": "Request to get all of the user's contacts",
+    "name": "GetUserContacts",
+    "group": "UserContacts",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "MemberId",
+            "description": "<p>(Optional) the user's memberId to fetch of their contacts. If no memberId provided, nothing is returned.</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the contacts are found.</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "a",
+            "description": "<p>List of the user's contacts information.</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "404: username Not Found": [
+          {
+            "group": "404: username Not Found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;No Contacts were found&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/fetch_contacts.js",
+    "groupTitle": "UserContacts"
   },
   {
     "type": "get",
