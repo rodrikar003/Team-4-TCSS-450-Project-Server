@@ -138,6 +138,14 @@ router.post('/', (req, res) => {
                         success: true
                     })                
                 })
+                .catch((err) => {
+                    //log the error
+                    console.log(err)
+                    res.status(400).send({
+                         message: err.detail
+                    })
+                    
+                })
     } else {
         response.status(400).send({
             message: "Missing required information"
