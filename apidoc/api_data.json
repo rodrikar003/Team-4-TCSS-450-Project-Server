@@ -911,6 +911,96 @@
     "groupTitle": "Chats"
   },
   {
+    "type": "post",
+    "url": "/add_user",
+    "title": "adds two contacts together",
+    "name": "GetContacts",
+    "group": "Contacts",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "MemberID_A",
+            "description": "<p>first person's id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "MemberID_B",
+            "description": "<p>second person's id</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 201": [
+          {
+            "group": "Success 201",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the MemberId is inserted</p>"
+          },
+          {
+            "group": "Success 201",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the inserted MemberId</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Name exists": [
+          {
+            "group": "400: Name exists",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Friend Already Exists&quot;</p>"
+          }
+        ],
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/add_contact.js",
+    "groupTitle": "Contacts"
+  },
+  {
     "type": "get",
     "url": "/lookup_user/",
     "title": "Request to get all users with the given username/nickname",
@@ -1003,96 +1093,6 @@
     },
     "version": "0.0.0",
     "filename": "routes/lookup_user.js",
-    "groupTitle": "Contacts"
-  },
-  {
-    "type": "post",
-    "url": "/add_user",
-    "title": "adds two contacts together",
-    "name": "GetContacts",
-    "group": "Contacts",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "MemberID_A",
-            "description": "<p>first person's id</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "MemberID_B",
-            "description": "<p>second person's id</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 201": [
-          {
-            "group": "Success 201",
-            "type": "boolean",
-            "optional": false,
-            "field": "success",
-            "description": "<p>true when the MemberId is inserted</p>"
-          },
-          {
-            "group": "Success 201",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>the inserted MemberId</p>"
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "400: Name exists": [
-          {
-            "group": "400: Name exists",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;Friend Already Exists&quot;</p>"
-          }
-        ],
-        "400: Missing Parameters": [
-          {
-            "group": "400: Missing Parameters",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;Missing required information&quot;</p>"
-          }
-        ],
-        "400: SQL Error": [
-          {
-            "group": "400: SQL Error",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>the reported SQL error details</p>"
-          }
-        ],
-        "400: JSON Error": [
-          {
-            "group": "400: JSON Error",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "routes/add_contact.js",
     "groupTitle": "Contacts"
   },
   {
@@ -1493,7 +1493,7 @@
             "type": "String",
             "optional": false,
             "field": "authorization",
-            "description": "<p>JWT provided from Auth get</p>"
+            "description": "<p>OWM supplied API Token</p>"
           }
         ]
       }
