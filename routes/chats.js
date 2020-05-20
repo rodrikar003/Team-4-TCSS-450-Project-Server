@@ -259,6 +259,66 @@ router.get("/:chatId", (request, response, next) => {
 });
 
 /**
+ * @api {get} /chats Request to get the chats the user is part of
+ * @apiName GetChats
+ * @apiGroup Chats
+ * 
+ * @apiHeader {String} authorization Valid JSON Web Token JWT
+ *  
+ * @apiSuccess {Number} rowCount the number of chat rooms returned
+ * @apiSuccess {Object[]} chatIds List of chatIds of chat rooms user is in
+ * @apiSuccess {String} messages.email The email for the member in the chat
+ * 
+ * @apiError (404: ChatId Not Found) {String} message "Chat ID Not Found"
+ * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
+ * @apiError (400: Missing Parameters) {String} message "Missing required information"
+ * 
+ * @apiError (400: SQL Error) {String} message the reported SQL error details
+ * 
+ * @apiUse JSONError
+ */ 
+router.get("/", (request, response, next) => {
+    //validate user exists 
+    let query = 'SELECT * FROM Members WHERE MemberId=$1'
+    let values = [request.decoded.memberid]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "user not found"
+                })
+            } else {
+                //user found
+                next()
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+    }, (request, response) => {
+        //REtrive the chats
+        let query = `SELECT DISTINCT chatid
+                    FROM ChatMembers
+                    WHERE MemberId=$1`
+        let values = [request.decoded.memberid]
+        pool.query(query, values)
+            .then(result => {
+                response.send({
+                    rowCount : result.rowCount,
+                    rows: result.rows
+                })
+            }).catch(err => {
+                response.status(400).send({
+                    message: "SQL Error",
+                    error: err
+                })
+            })
+});
+
+/**
  * @api {delete} /chats/:chatId?/:email? Request delete a user from a chat
  * @apiName DeleteChats
  * @apiGroup Chats
