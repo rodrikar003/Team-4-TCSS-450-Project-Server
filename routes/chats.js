@@ -184,7 +184,7 @@ router.put("/:chatId/", (request, response, next) => {
 )
 
 /**
- * @api {get} /chats/:chatId? Request to get the emails of user in a chat
+ * @api {get} /chats/:chatId? Request to get the emails of all users in a chat
  * @apiName GetChats
  * @apiGroup Chats
  * 
@@ -259,17 +259,19 @@ router.get("/:chatId", (request, response, next) => {
 });
 
 /**
- * @api {get} /chats Request to get the chats the user is part of
+ * @api {get} /chats Request to get the chats a specific user is a part of
  * @apiName GetChats
  * @apiGroup Chats
+ * 
+ * @apiDescription Returns the chatids of every chat the user associated with the required JWT is a part of
  * 
  * @apiHeader {String} authorization Valid JSON Web Token JWT
  *  
  * @apiSuccess {Number} rowCount the number of chat rooms returned
- * @apiSuccess {Object[]} chatIds List of chatIds of chat rooms user is in
- * @apiSuccess {String} messages.email The email for the member in the chat
+ * @apiSuccess {Object[]} chatRooms List of chatIds of chat rooms user is in
+ * @apiSuccess {String} messages.chatId The chatid for the chat room
  * 
- * @apiError (404: ChatId Not Found) {String} message "Chat ID Not Found"
+ * @apiError (404: Member Not Found) {String} message "Member Not Found"
  * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
  * 
@@ -286,7 +288,7 @@ router.get("/", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "user not found"
+                    message: "Member Not Found"
                 })
             } else {
                 //user found

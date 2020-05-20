@@ -479,7 +479,7 @@ define({ "api": [
   {
     "type": "get",
     "url": "/chats/:chatId?",
-    "title": "Request to get the emails of user in a chat",
+    "title": "Request to get the emails of all users in a chat",
     "name": "GetChats",
     "group": "Chats",
     "header": {
@@ -544,6 +544,106 @@ define({ "api": [
             "optional": false,
             "field": "message",
             "description": "<p>&quot;Chat ID Not Found&quot;</p>"
+          }
+        ],
+        "400: Invalid Parameter": [
+          {
+            "group": "400: Invalid Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Malformed parameter. chatId must be a number&quot;</p>"
+          }
+        ],
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/chats.js",
+    "groupTitle": "Chats"
+  },
+  {
+    "type": "get",
+    "url": "/chats",
+    "title": "Request to get the chats a specific user is a part of",
+    "name": "GetChats",
+    "group": "Chats",
+    "description": "<p>Returns the chatids of every chat the user associated with the required JWT is a part of</p>",
+    "header": {
+      "fields": {
+        "Header": [
+          {
+            "group": "Header",
+            "type": "String",
+            "optional": false,
+            "field": "authorization",
+            "description": "<p>Valid JSON Web Token JWT</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "Number",
+            "optional": false,
+            "field": "rowCount",
+            "description": "<p>the number of chat rooms returned</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "chatRooms",
+            "description": "<p>List of chatIds of chat rooms user is in</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "messages.chatId",
+            "description": "<p>The chatid for the chat room</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "404: Member Not Found": [
+          {
+            "group": "404: Member Not Found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Member Not Found&quot;</p>"
           }
         ],
         "400: Invalid Parameter": [
@@ -811,96 +911,6 @@ define({ "api": [
     "groupTitle": "Chats"
   },
   {
-    "type": "post",
-    "url": "/add_user",
-    "title": "adds two contacts together",
-    "name": "GetContacts",
-    "group": "Contacts",
-    "parameter": {
-      "fields": {
-        "Parameter": [
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "MemberID_A",
-            "description": "<p>first person's id</p>"
-          },
-          {
-            "group": "Parameter",
-            "type": "String",
-            "optional": false,
-            "field": "MemberID_B",
-            "description": "<p>second person's id</p>"
-          }
-        ]
-      }
-    },
-    "success": {
-      "fields": {
-        "Success 201": [
-          {
-            "group": "Success 201",
-            "type": "boolean",
-            "optional": false,
-            "field": "success",
-            "description": "<p>true when the MemberId is inserted</p>"
-          },
-          {
-            "group": "Success 201",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>the inserted MemberId</p>"
-          }
-        ]
-      }
-    },
-    "error": {
-      "fields": {
-        "400: Name exists": [
-          {
-            "group": "400: Name exists",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;Friend Already Exists&quot;</p>"
-          }
-        ],
-        "400: Missing Parameters": [
-          {
-            "group": "400: Missing Parameters",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;Missing required information&quot;</p>"
-          }
-        ],
-        "400: SQL Error": [
-          {
-            "group": "400: SQL Error",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>the reported SQL error details</p>"
-          }
-        ],
-        "400: JSON Error": [
-          {
-            "group": "400: JSON Error",
-            "type": "String",
-            "optional": false,
-            "field": "message",
-            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
-          }
-        ]
-      }
-    },
-    "version": "0.0.0",
-    "filename": "routes/add_contact.js",
-    "groupTitle": "Contacts"
-  },
-  {
     "type": "get",
     "url": "/lookup_user/",
     "title": "Request to get all users with the given username/nickname",
@@ -993,6 +1003,96 @@ define({ "api": [
     },
     "version": "0.0.0",
     "filename": "routes/lookup_user.js",
+    "groupTitle": "Contacts"
+  },
+  {
+    "type": "post",
+    "url": "/add_user",
+    "title": "adds two contacts together",
+    "name": "GetContacts",
+    "group": "Contacts",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "MemberID_A",
+            "description": "<p>first person's id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "MemberID_B",
+            "description": "<p>second person's id</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 201": [
+          {
+            "group": "Success 201",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the MemberId is inserted</p>"
+          },
+          {
+            "group": "Success 201",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the inserted MemberId</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Name exists": [
+          {
+            "group": "400: Name exists",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Friend Already Exists&quot;</p>"
+          }
+        ],
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/add_contact.js",
     "groupTitle": "Contacts"
   },
   {
