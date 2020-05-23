@@ -14,7 +14,7 @@ router.use(bodyParser.json())
 /**
  * @api {post} /delete_contact deletes an existing contact
  * @apiName GetDeleteContacts
- * @apiGroup DeleteContacts
+ * @apiGroup Contacts
  * 
  * @apiParam {String} Contacts's primary key
  * 

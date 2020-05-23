@@ -184,7 +184,7 @@ router.put("/:chatId/", (request, response, next) => {
 )
 
 /**
- * @api {get} /chats/:chatId? Request to get the emails of user in a chat
+ * @api {get} /chats/:chatId? Request to get the emails of all users in a chat
  * @apiName GetChats
  * @apiGroup Chats
  * 
@@ -244,6 +244,68 @@ router.get("/:chatId", (request, response, next) => {
                     INNER JOIN Members ON ChatMembers.MemberId=Members.MemberId
                     WHERE ChatId=$1`
         let values = [request.params.chatId]
+        pool.query(query, values)
+            .then(result => {
+                response.send({
+                    rowCount : result.rowCount,
+                    rows: result.rows
+                })
+            }).catch(err => {
+                response.status(400).send({
+                    message: "SQL Error",
+                    error: err
+                })
+            })
+});
+
+/**
+ * @api {get} /chats Request to get the chats a specific user is a part of
+ * @apiName GetChats
+ * @apiGroup Chats
+ * 
+ * @apiDescription Returns the chatids of every chat the user associated with the required JWT is a part of
+ * 
+ * @apiHeader {String} authorization Valid JSON Web Token JWT
+ *  
+ * @apiSuccess {Number} rowCount the number of chat rooms returned
+ * @apiSuccess {Object[]} chatRooms List of chatIds of chat rooms user is in
+ * @apiSuccess {String} messages.chatId The chatid for the chat room
+ * 
+ * @apiError (404: Member Not Found) {String} message "Member Not Found"
+ * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
+ * @apiError (400: Missing Parameters) {String} message "Missing required information"
+ * 
+ * @apiError (400: SQL Error) {String} message the reported SQL error details
+ * 
+ * @apiUse JSONError
+ */ 
+router.get("/", (request, response, next) => {
+    //validate user exists 
+    let query = 'SELECT * FROM Members WHERE MemberId=$1'
+    let values = [request.decoded.memberid]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Member Not Found"
+                })
+            } else {
+                //user found
+                next()
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+    }, (request, response) => {
+        //REtrive the chats
+        let query = `SELECT DISTINCT chatid
+                    FROM ChatMembers
+                    WHERE MemberId=$1`
+        let values = [request.decoded.memberid]
         pool.query(query, values)
             .then(result => {
                 response.send({

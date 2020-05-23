@@ -15,7 +15,7 @@ var router = express.Router()
  * @apiName GetWeather
  * @apiGroup Weather
  * 
- * @apiHeader {String} authorization JWT provided from Auth get
+ * @apiHeader {String} authorization OWM supplied API Token 
  * @apiParam {String} zipcode for any location
  * 
  * @apiSuccess {String} weather weather information retrieved
