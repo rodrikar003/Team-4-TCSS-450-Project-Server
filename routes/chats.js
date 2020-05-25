@@ -489,7 +489,7 @@ router.delete("/:chatId", (request, response, next) => {
     //             error: err
     //         })
     //     })
-    let insert = `DELETE FROM ChatMembers WHERE chatid=$1;`
+    let insert = `DELETE FROM ChatMembers WHERE chatid=$1`
     let values = [request.params.chatId]
     pool.query(insert, values)
         .then(result => {
