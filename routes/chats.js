@@ -474,15 +474,46 @@ router.delete("/:chatId", (request, response, next) => {
         })
 }, (request, response) => {
     //Delete the chat
-    let insert = `DELETE FROM ChatMembers where chatid=$1;
-                    DELETE FROM Messages where chatid=$1;
-                    DELETE FROM Chats where chatid=$1;`
+    // let insert = `DELETE FROM ChatMembers where chatid=$1;
+    //                 DELETE FROM Messages where chatid=$1;
+    //                 DELETE FROM Chats where chatid=$1;`
+    // let values = [request.params.chatId]
+    // pool.query(insert, values)
+    //     .then(result => {
+    //         response.send({
+    //             success: true
+    //         })
+    //     }).catch(err => {
+    //         response.status(400).send({
+    //             message: "SQL Error",
+    //             error: err
+    //         })
+    //     })
+    let insert = `DELETE FROM ChatMembers WHERE chatid=$1;`
     let values = [request.params.chatId]
     pool.query(insert, values)
         .then(result => {
-            response.send({
-                success: true
-            })
+            let insert = `DELETE FROM Message WHERE chatid=$1`
+            pool.query(insert, values)
+                .then(result => {
+                    let insert = `DELETE FROM Chats WHERE chatid=$1`
+                    pool.query(insert, values)
+                        .then(result => {
+                            response.send({
+                                success: true
+                            })
+                        }).catch(err => {
+                            response.status(400).send({
+                                message: "SQL Error",
+                                error: err
+                            })
+                        })
+                }).catch(err => {
+                    response.status(400).send({
+                        message: "SQL Error",
+                        error: err
+                    })
+                })
         }).catch(err => {
             response.status(400).send({
                 message: "SQL Error",
