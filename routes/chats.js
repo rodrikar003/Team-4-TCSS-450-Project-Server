@@ -321,7 +321,7 @@ router.get("/", (request, response, next) => {
 });
 
 /**
- * @api {delete} /chats/:chatId?/:email? Request delete a user from a chat
+ * @api {delete} /chats/:chatId/:email Request delete a user from a chat
  * @apiName DeleteChats
  * @apiGroup Chats
  * 
@@ -439,6 +439,25 @@ router.delete("/:chatId/:email", (request, response, next) => {
     }
 )
 
+/**
+ * @api {delete} /chats/:chatId Requests to delete a chat room
+ * @apiName DeleteChatRoom
+ * @apiGroup Chats
+ * 
+ * @apiDescription Removes all traces of the chat from database  
+ * 
+ * @apiParam {Number} chatId the chat room to delete
+ * 
+ * @apiSuccess {boolean} success true when the chat room is deleted
+ * 
+ * @apiError (404: Chat Not Found) {String} message "chatID not found"
+ * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
+ * @apiError (400: Missing Parameters) {String} message "Missing required information"
+ * 
+ * @apiError (400: SQL Error) {String} message the reported SQL error details
+ * 
+ * @apiUse JSONError
+ */ 
 router.delete("/:chatId", (request, response, next) => {
     //validate on empty parameters
     if (!request.params.chatId) {

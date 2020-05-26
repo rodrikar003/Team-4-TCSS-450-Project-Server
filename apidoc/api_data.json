@@ -367,7 +367,93 @@
   },
   {
     "type": "delete",
-    "url": "/chats/:chatId?/:email?",
+    "url": "/chats/:chatId",
+    "title": "Requests to delete a chat room",
+    "name": "DeleteChatRoom",
+    "group": "Chats",
+    "description": "<p>Removes all traces of the chat from database</p>",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "Number",
+            "optional": false,
+            "field": "chatId",
+            "description": "<p>the chat room to delete</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the chat room is deleted</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "404: Chat Not Found": [
+          {
+            "group": "404: Chat Not Found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;chatID not found&quot;</p>"
+          }
+        ],
+        "400: Invalid Parameter": [
+          {
+            "group": "400: Invalid Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Malformed parameter. chatId must be a number&quot;</p>"
+          }
+        ],
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/chats.js",
+    "groupTitle": "Chats"
+  },
+  {
+    "type": "delete",
+    "url": "/chats/:chatId/:email",
     "title": "Request delete a user from a chat",
     "name": "DeleteChats",
     "group": "Chats",
