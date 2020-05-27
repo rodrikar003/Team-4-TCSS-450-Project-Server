@@ -21,8 +21,8 @@ CREATE TABLE Contacts(PrimaryKey SERIAL PRIMARY KEY,
 DROP TABLE IF EXISTS Chats;
 CREATE TABLE Chats (ChatID SERIAL PRIMARY KEY,
                     Name VARCHAR(255),
-                    MemberID INT NOT NULL,
-                    FOREIGN KEY(MemberID) REFERENCES Members(MemberID)
+                    Email VARCHAR(255) NOT NULL,
+                    FOREIGN KEY(Email) REFERENCES Members(Email)
 );
 
 DROP TABLE IF EXISTS ChatMembers;
