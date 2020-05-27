@@ -82,7 +82,8 @@ router.post("/", (request, response, next) => {
     pool.query(insert, values)
         .then(result => {
             response.send({
-                success: true
+                success: true, 
+                chatID: request.body.chatid
             })
         }).catch(err => {
             response.status(400).send({
