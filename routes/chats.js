@@ -509,7 +509,7 @@ router.delete("/:chatId", (request, response, next) => {
                     message: "Chat ID not found"
                 })
             } else {
-                console.log(result.rows.memberid);
+                console.log(result.rows);
                 console.log(request.decoded.memberid);
                 if (result.rows.memberid != request.decoded.memberid) {
                     response.status(404).send({
