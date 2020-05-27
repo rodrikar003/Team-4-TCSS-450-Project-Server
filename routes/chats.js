@@ -90,7 +90,6 @@ router.post("/", (request, response, next) => {
                 error: err
             })
         })
-    }
 })
 
 /**
