@@ -62,7 +62,7 @@ router.post("/", (request, response, next) => {
     let insert = `INSERT INTO Chats(Name, Email)
                   VALUES ($1, $2)
                   RETURNING ChatId`
-    let values = [request.body.name, reqest.params.email]
+    let values = [request.body.name, request.params.email]
     pool.query(insert, values)
         .then(result => {
             response.send({
@@ -152,7 +152,7 @@ router.put("/:chatId/", (request, response, next) => {
                     message: "Chat ID not found"
                 })
             } else {
-                if (result.rows.memberid != request.decoded.memberid) {
+                if (result.rows[0].memberid != request.decoded.memberid) {
                     response.status(404).send({
                         message: "User is not owner of chat room"
                     })
@@ -445,7 +445,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
                     message: "Chat ID not found"
                 })
             } else {
-                if (result.rows.memberid != request.decoded.memberid) {
+                if (result.rows[0].memberid != request.decoded.memberid) {
                     response.status(404).send({
                         message: "User is not owner of chat room"
                     })
