@@ -498,6 +498,32 @@ router.delete("/:chatId", (request, response, next) => {
             })
         })
 }, (request, response, next) => {
+    //validate jwt matches owner of chatroom
+    let query = 'SELECT MemberId FROM CHATS WHERE ChatId=$1'
+    let values = [request.params.chatId]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Chat ID not found"
+                })
+            } else {
+                if (result.rows.memberid != request.decoded.memberid) {
+                    response.status(404).send({
+                        message: "User is not owner of chat room"
+                    })
+                } else {
+                    next()
+                }
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+}, (request, response, next) => {
     //Delete the respective rows from chatmembers
     let insert = `DELETE FROM ChatMembers where chatid=$1`
     let values = [request.params.chatId]
