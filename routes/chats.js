@@ -439,38 +439,6 @@ router.delete("/:chatId/:email", (request, response, next) => {
             })
         })
 }, (request, response, next) => {
-    //validate jwt matches owner of chatroom
-    let query =  `SELECT MemberId FROM Members
-                WHERE Email IN (
-                    SELECT Email 
-                    FROM Chats
-                    WHERE chatid=$1
-                )
-                GROUP BY MemberId`
-    let values = [request.params.chatId]
-
-    pool.query(query, values)
-        .then(result => {
-            if (result.rowCount == 0) {
-                response.status(404).send({
-                    message: "Chat ID not found"
-                })
-            } else {
-                if (result.rows[0].memberid != request.decoded.memberid) {
-                    response.status(404).send({
-                        message: "User is not owner of chat room"
-                    })
-                } else {
-                    next()
-                }
-            }
-        }).catch(error => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: error
-            })
-        })
-}, (request, response, next) => {
     //validate email exists AND convert it to the associated memberId
     let query = 'SELECT MemberID FROM Members WHERE Email=$1'
     let values = [request.params.email]
@@ -482,7 +450,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
                     message: "email not found"
                 })
             } else {
-                request.params.email = result.rows[0].memberid
+                request.params.memberid = result.rows[0].memberid
                 next()
             }
         }).catch(error => {
@@ -494,7 +462,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
 }, (request, response, next) => {
     //validate email exists in the chat
     let query = 'SELECT * FROM ChatMembers WHERE ChatId=$1 AND MemberId=$2'
-    let values = [request.params.chatId, request.params.email]
+    let values = [request.params.chatId, request.params.memberid]
 
     pool.query(query, values)
         .then(result => {
@@ -512,13 +480,46 @@ router.delete("/:chatId/:email", (request, response, next) => {
             })
         })
 
+}, (request, response, next) => {
+    //validate jwt matches owner of chatroom or member being deleted
+    let query =  `SELECT MemberId FROM Members
+                WHERE Email IN (
+                    SELECT Email 
+                    FROM Chats
+                    WHERE chatid=$1
+                )
+                GROUP BY MemberId`
+    let values = [request.params.chatId]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Chat ID not found"
+                })
+            } else {
+                if (result.rows[0].memberid != request.decoded.memberid
+                    && result.decoded.memberid != request.params.memberid) {
+                    response.status(404).send({
+                        message: "User is not owner of chat room"
+                    })
+                } else {
+                    next()
+                }
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
 }, (request, response) => {
     //Delete the memberId from the chat
     let insert = `DELETE FROM ChatMembers
                   WHERE ChatId=$1
                   AND MemberId=$2
                   RETURNING *`
-    let values = [request.params.chatId, request.params.email]
+    let values = [request.params.chatId, request.params.memberid]
     pool.query(insert, values)
         .then(result => {
             response.send({
