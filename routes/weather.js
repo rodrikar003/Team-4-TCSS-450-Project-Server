@@ -67,7 +67,7 @@ var lon = parseFloat(location.longitude)
 })
 
 
-
+g
 /**
  * @api {get} /weather/coords/ All in one call request for current, daily, and hourly weather from OpenWeatherMap
  * @apiName GetWeather
