@@ -300,25 +300,31 @@ router.get("/", (request, response, next) => {
                 error: error
             })
         })
-    }, (request, response) => {
-        //REtrive the chats
-        let query = `SELECT DISTINCT chatid
+}, (request, response) => {
+    //Retrive the chats
+    let query =  `SELECT * FROM Chats
+                WHERE chatid IN (
+                    SELECT DISTINCT chatid 
                     FROM ChatMembers
-                    WHERE MemberId=$1`
-        let values = [request.decoded.memberid]
-        pool.query(query, values)
-            .then(result => {
-                response.send({
-                    rowCount : result.rowCount,
-                    rows: result.rows
-                })
-            }).catch(err => {
-                response.status(400).send({
-                    message: "SQL Error",
-                    error: err
-                })
+                    WHERE memberid=$1
+                )
+                GROUP BY chatid`
+    let values = [request.decoded.memberid]
+    pool.query(query, values)
+        .then(result => {
+            response.send({
+                rowCount : result.rowCount,
+                rows: result.rows
             })
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: err
+            })
+        })
 });
+
+
 
 /**
  * @api {delete} /chats/:chatId/:email Request delete a user from a chat
