@@ -57,17 +57,32 @@ router.post("/", (request, response, next) => {
                 error: err
             })
         })
-}, (request, response) => {
-
+}, (request, response, next) => {
+    // insert new chat room
     let insert = `INSERT INTO Chats(Name, Email)
                   VALUES ($1, $2)
                   RETURNING ChatId`
     let values = [request.body.name, request.params.email]
     pool.query(insert, values)
         .then(result => {
+            request.body.chatid = result.rows[0].chatid
+            next()
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: err
+            })
+        })
+}, (request, response) => {
+    //Insert the memberId into the chat
+    let insert = `INSERT INTO ChatMembers(ChatId, MemberId)
+                  VALUES ($1, $2)
+                  RETURNING *`
+    let values = [request.body.chatid, request.decoded.memberid]
+    pool.query(insert, values)
+        .then(result => {
             response.send({
-                success: true,
-                chatID:result.rows[0].chatid
+                success: true
             })
         }).catch(err => {
             response.status(400).send({
@@ -75,6 +90,7 @@ router.post("/", (request, response, next) => {
                 error: err
             })
         })
+    }
 })
 
 /**
