@@ -509,11 +509,7 @@ router.delete("/:chatId", (request, response, next) => {
                     message: "Chat ID not found"
                 })
             } else {
-                console.log(result);
-                console.log(result.rows);
-                console.log(result.rows.memberid);
-                console.log(request.decoded.memberid);
-                if (result.rows.memberid != request.decoded.memberid) {
+                if (result.rows[0].memberid != request.decoded.memberid) {
                     response.status(404).send({
                         message: "User is not owner of chat room"
                     })
