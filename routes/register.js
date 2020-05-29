@@ -55,7 +55,7 @@ router.post('/', (req, res) => {
     var email = req.body.email
     var password = req.body.password
     var verified = req.body.verified
-    var verification = Math.random() * (max - min) + min;
+    var verification = Math.floor(Math.random() * (max - min) + min);
     //Verify that the caller supplied all the parameters
     //In js, empty strings or null values evaluate to false
     if(first && last && username && email && password && verification) {
@@ -77,11 +77,9 @@ router.post('/', (req, res) => {
                         success: true,
                         email: result.rows[0].email,
                         verification: verification
-                    })
-                    sendEmail("uwnetid@uw.edu", email, verification, "<strong>Welcome to our app!</strong>");
-                
+                    })                
                     ///// email Verification
-
+                    // handled below now
                 })
                 .catch((err) => {
                     //log the error
@@ -131,13 +129,22 @@ router.post('/', (req, res) => {
         let salt = crypto.randomBytes(32).toString("hex")
         let salted_hash = getHash(password, salt)
         let values = [salted_hash, salt, email]
-        let query = "UPDATE Members SET Password, Salt VALUES ($1, $2) WHERE Email = $3" // check that this is a valid SQL statement
+        console.log("attempting to add new password")
+        let query = "UPDATE Members SET Password = $1, Salt = $2 WHERE Email = $3"
         pool.query(query, values)
                 .then(result => {
                     //We successfully reset the user's password
                     res.status(201).send({
                         success: true
                     })                
+                })
+                .catch((err) => {
+                    //log the error
+                    console.log(err)
+                    res.status(400).send({
+                         message: err.detail
+                    })
+                    
                 })
     } else {
         response.status(400).send({
