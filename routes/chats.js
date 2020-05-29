@@ -9,6 +9,8 @@ var router = express.Router()
 //This allows parsing of the body of POST requests, that are encoded in JSON
 router.use(require("body-parser").json())
 
+let pushy = require('../utilities/utils').pushy
+
 /**
  * @apiDefine JSONError
  * @apiError (400: JSON Error) {String} message "malformed JSON in parameters"
@@ -127,7 +129,7 @@ router.put("/", (request, response, next) => {
     }
 }, (request, response, next) => {
     //validate chat id exists
-    let query = 'SELECT * FROM CHATS WHERE ChatId=$1'
+    let query = 'SELECT Name FROM CHATS WHERE ChatId=$1'
     let values = [request.body.chatId]
 
     pool.query(query, values)
@@ -137,6 +139,7 @@ router.put("/", (request, response, next) => {
                     message: "Chat ID not found"
                 })
             } else {
+                request.body.chatName = result.rows[0].name
                 next()
             }
         }).catch(error => {
@@ -145,7 +148,7 @@ router.put("/", (request, response, next) => {
                 error: error
             })
         })
-},(request, response, next) => {
+}, (request, response, next) => {
     //validate jwt matches owner of chatroom
     let query =  `SELECT MemberId FROM Members
                 WHERE Email IN (
@@ -199,45 +202,65 @@ router.put("/", (request, response, next) => {
             })
         })
 }, (request, response, next) => {
-        //validate email does not already exist in the chat
-        let query = 'SELECT * FROM ChatMembers WHERE ChatId=$1 AND MemberId=$2'
-        let values = [request.body.chatId, request.body.memberid]
-    
-        pool.query(query, values)
-            .then(result => {
-                if (result.rowCount > 0) {
-                    response.status(400).send({
-                        message: "user already joined"
-                    })
-                } else {
-                    next()
-                }
-            }).catch(error => {
-                response.status(400).send({
-                    message: "SQL Error",
-                    error: error
-                })
-            })
+    //validate email does not already exist in the chat
+    let query = 'SELECT * FROM ChatMembers WHERE ChatId=$1 AND MemberId=$2'
+    let values = [request.body.chatId, request.body.memberid]
 
-}, (request, response) => {
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount > 0) {
+                response.status(400).send({
+                    message: "user already joined"
+                })
+            } else {
+                next()
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+
+}, (request, response, next) => {
     //Insert the memberId into the chat
     let insert = `INSERT INTO ChatMembers(ChatId, MemberId)
-                  VALUES ($1, $2)
-                  RETURNING *`
+                  VALUES ($1, $2)`
     let values = [request.body.chatId, request.body.memberid]
     pool.query(insert, values)
         .then(result => {
-            response.send({
-                success: true
-            })
+            next()
         }).catch(err => {
             response.status(400).send({
                 message: "SQL Error",
                 error: err
             })
         })
+}, (request, response) => {
+    let query = `SELECT token FROM Push_Token
+                    WHERE MemberId=$1`
+    let values = [request.body.memberid]
+
+    let chatroom = {
+        id: request.body.id,
+        name: request.body.chatName,
+        sender: request.decoded.email
     }
-)
+
+    pool.query(query, values)
+        .then(result => {
+            console.log(chatroom);
+            pushy.addIndividualToChatRoom(result.rows[0].token, chatroom);
+            response.send({
+                success: true
+            })
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error on select from push token",
+                error: err
+            })
+        })
+})
 
 /**
  * @api {get} /chats/:chatId? Request to get the emails of all users in a chat
