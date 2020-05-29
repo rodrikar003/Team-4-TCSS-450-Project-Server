@@ -29,7 +29,7 @@ function sendMessageToIndividual(token, message) {
 function addIndividualToChatRoom(token, chatRoom) {
     var data = {
         "type": "chat",
-        "name": chatRoom.name,
+        "chat": chatRoom,
         "id": chatRoom.id
     }
 
