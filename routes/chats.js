@@ -236,7 +236,7 @@ router.put("/", (request, response, next) => {
                     WHERE MemberId=$1`
     let values = [request.body.memberid]
 
-    let chatroom = {
+    let chatRoom = {
         chatId: request.body.chatId,
         chatName: request.body.chatName,
         owner: request.decoded.email
@@ -245,7 +245,7 @@ router.put("/", (request, response, next) => {
     pool.query(query, values)
         .then(result => {
             console.log(chatroom);
-            pushy.addIndividualToChatRoom(result.rows[0].token, chatroom);
+            pushy.addIndividualToChatRoom(result.rows[0].token, chatRoom);
             response.send({
                 success: true
             })

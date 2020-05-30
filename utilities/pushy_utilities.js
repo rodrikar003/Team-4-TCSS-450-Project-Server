@@ -30,7 +30,7 @@ function addIndividualToChatRoom(token, chatRoom) {
     var data = {
         "type": "chat",
         "chatRoom": chatRoom,
-        "chatId": chatRoom.id
+        "chatId": chatRoom.chatId
     }
 
     // Send push notification via the Send Notifications API 
