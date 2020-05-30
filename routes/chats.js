@@ -67,7 +67,7 @@ router.post("/", (request, response, next) => {
     let values = [request.body.name, request.params.email]
     pool.query(insert, values)
         .then(result => {
-            request.body.chatid = result.rows[0].chatid
+            request.body.chatId = result.rows[0].chatId
             next()
         }).catch(err => {
             response.status(400).send({
@@ -80,12 +80,12 @@ router.post("/", (request, response, next) => {
     let insert = `INSERT INTO ChatMembers(ChatId, MemberId)
                   VALUES ($1, $2)
                   RETURNING *`
-    let values = [request.body.chatid, request.decoded.memberid]
+    let values = [request.body.chatId, request.decoded.memberid]
     pool.query(insert, values)
         .then(result => {
             response.send({
                 success: true, 
-                chatID: request.body.chatid
+                chatId: request.body.chatId
             })
         }).catch(err => {
             response.status(400).send({
@@ -109,7 +109,7 @@ router.post("/", (request, response, next) => {
  * 
  * @apiSuccess {boolean} success true when the name is inserted
  * 
- * @apiError (404: Chat Not Found) {String} message "chatID not found"
+ * @apiError (404: Chat Not Found) {String} message "chatId not found"
  * @apiError (404: Email Not Found) {String} message "email not found"
  * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
  * @apiError (400: Duplicate Email) {String} message "user already joined"
@@ -293,7 +293,7 @@ router.put("/", (request, response, next) => {
  * 
  * @apiSuccess {boolean} success true when the name is deleted
  * 
- * @apiError (404: Chat Not Found) {String} message "chatID not found"
+ * @apiError (404: Chat Not Found) {String} message "chatId not found"
  * @apiError (404: Email Not Found) {String} message "email not found"
  * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
  * @apiError (400: Duplicate Email) {String} message "user not in chat"
@@ -507,13 +507,13 @@ router.get("/:chatId", (request, response, next) => {
  * @apiName GetChats
  * @apiGroup Chats
  * 
- * @apiDescription Returns the chatids of every chat the user associated with the required JWT is a part of
+ * @apiDescription Returns the chatIds of every chat the user associated with the required JWT is a part of
  * 
  * @apiHeader {String} authorization Valid JSON Web Token JWT
  *  
  * @apiSuccess {Number} rowCount the number of chat rooms returned
  * @apiSuccess {Object[]} chatRooms List of chatIds of chat rooms user is in
- * @apiSuccess {String} messages.chatId The chatid for the chat room
+ * @apiSuccess {String} messages.chatId The chatId for the chat room
  * 
  * @apiError (404: Member Not Found) {String} message "Member Not Found"
  * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
@@ -547,12 +547,12 @@ router.get("/", (request, response, next) => {
 }, (request, response) => {
     //Retrive the chats
     let query =  `SELECT * FROM Chats
-                WHERE chatid IN (
-                    SELECT DISTINCT chatid 
+                WHERE ChatId IN (
+                    SELECT DISTINCT ChatId 
                     FROM ChatMembers
                     WHERE memberid=$1
                 )
-                GROUP BY chatid`
+                GROUP BY ChatId`
     let values = [request.decoded.memberid]
     pool.query(query, values)
         .then(result => {
@@ -579,7 +579,7 @@ router.get("/", (request, response, next) => {
  * 
  * @apiSuccess {boolean} success true when the chat room is deleted
  * 
- * @apiError (404: Chat Not Found) {String} message "chatID not found"
+ * @apiError (404: Chat Not Found) {String} message "chatId not found"
  * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
  * 
@@ -649,7 +649,7 @@ router.delete("/:chatId", (request, response, next) => {
         })
 }, (request, response, next) => {
     //Delete the respective rows from chatmembers
-    let insert = `DELETE FROM ChatMembers where chatid=$1`
+    let insert = `DELETE FROM ChatMembers where ChatId=$1`
     let values = [request.params.chatId]
     pool.query(insert, values)
         .then(result => {
@@ -662,7 +662,7 @@ router.delete("/:chatId", (request, response, next) => {
         })
 }, (request, response, next) => {
     //Delete the respective rows from messages
-    let insert = `DELETE FROM Messages where chatid=$1`
+    let insert = `DELETE FROM Messages where chatId=$1`
     let values = [request.params.chatId]
     pool.query(insert, values)
         .then(result => {
@@ -675,7 +675,7 @@ router.delete("/:chatId", (request, response, next) => {
         })
 }, (request, response) => {
     //Delete the respective rows from chats
-    let insert = `DELETE FROM Chats where chatid=$1`
+    let insert = `DELETE FROM Chats where ChatId=$1`
     let values = [request.params.chatId]
     pool.query(insert, values)
         .then(result => {

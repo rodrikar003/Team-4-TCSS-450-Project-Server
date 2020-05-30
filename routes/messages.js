@@ -69,7 +69,7 @@ router.post("/", (request, response, next) => {
             }
         }).catch(error => {
             response.status(400).send({
-                message: "SQL Error on chatid check",
+                message: "SQL Error on chatId check",
                 error: error
             })
         })
@@ -190,7 +190,7 @@ router.get("/:chatId?/:messageId?", (request, response, next) => {
             next()
         }
     }, (request, response, next) => {
-        //validate that the ChatId exisits
+        //validate that the chatId exisits
         let query = 'SELECT * FROM CHATS WHERE ChatId=$1'
         let values = [request.params.chatId]
 
