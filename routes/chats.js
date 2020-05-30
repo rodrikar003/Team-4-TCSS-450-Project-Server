@@ -237,9 +237,9 @@ router.put("/", (request, response, next) => {
     let values = [request.body.memberid]
 
     let chatroom = {
-        id: request.body.chatId,
-        name: request.body.chatName,
-        sender: request.decoded.email
+        chatId: request.body.chatId,
+        chatName: request.body.chatName,
+        owner: request.decoded.email
     }
 
     pool.query(query, values)
@@ -502,7 +502,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
     //validate jwt matches owner of chatroom or member being deleted
     let query =  `SELECT Email FROM Chats
                     WHERE ChatId=$1`
-    let values = [request.body.chatId]
+    let values = [request.params.chatId]
 
     pool.query(query, values)
         .then(result => {

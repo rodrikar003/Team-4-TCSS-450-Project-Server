@@ -10,7 +10,7 @@ function sendMessageToIndividual(token, message) {
     var data = {
         "type": "msg",
         "message": message,
-        "chatid": message.chatid
+        "chatId": message.chatid
     }
 
     // Send push notification via the Send Notifications API 
@@ -29,8 +29,8 @@ function sendMessageToIndividual(token, message) {
 function addIndividualToChatRoom(token, chatRoom) {
     var data = {
         "type": "chat",
-        "chat": chatRoom,
-        "id": chatRoom.id
+        "chatRoom": chatRoom,
+        "chatId": chatRoom.id
     }
 
     // Send push notification via the Send Notifications API 
