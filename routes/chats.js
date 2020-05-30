@@ -199,8 +199,8 @@ router.put("/", (request, response, next) => {
 }, (request, response, next) => {
     //validate the two users are contacts
     let query = `SELECT * FROM Contacts
-                    WHERE ((MemberId_A=129 AND MemberId_B=130)
-                    OR (MemberId_B=129 AND MemberId_B=130))
+                    WHERE ((MemberId_A=$1 AND MemberId_B=$2)
+                    OR (MemberId_B=$1 AND MemberId_B=$1))
                     AND Verified=1`
     let values = [request.body.memberid, request.decoded.memberid]
 
