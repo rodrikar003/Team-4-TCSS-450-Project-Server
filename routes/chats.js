@@ -512,7 +512,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
                 })
             } else {
                 if (result.rows[0].email != request.decoded.email
-                    && request.params.memberid != request.decoded.email) {
+                    && request.params.email != request.decoded.email) {
                     response.status(404).send({
                         message: "User is not owner of chat room"
                     })
