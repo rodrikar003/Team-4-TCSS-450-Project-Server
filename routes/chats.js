@@ -207,7 +207,8 @@ router.delete("/:chatId", (request, response, next) => {
     pool.query(insert, values)
         .then(result => {
             response.send({
-                success: true
+                success: true,
+                chatId: request.params.chatId
             })
         }).catch(err => {
             response.status(400).send({
@@ -392,7 +393,8 @@ router.put("/", (request, response, next) => {
             console.log(chatRoom);
             pushy.addIndividualToChatRoom(result.rows[0].token, chatRoom);
             response.send({
-                success: true
+                success: true,
+                email: request.body.email
             })
         }).catch(err => {
             response.status(400).send({
@@ -538,7 +540,8 @@ router.delete("/:chatId/:email", (request, response, next) => {
     pool.query(insert, values)
         .then(result => {
             response.send({
-                success: true
+                success: true,
+                email: request.params.membeid
             })
         }).catch(err => {
             response.status(400).send({
