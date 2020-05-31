@@ -54,7 +54,7 @@ router.post("/", (request, response, next) => {
     pool.query(insert, values)
         .then(result => {
             console.log(result)
-            request.body.chatId = result.rows[0].chatId
+            request.body.chatId = result.rows[0].chatid
             next()
         }).catch(err => {
             response.status(400).send({
