@@ -53,7 +53,6 @@ router.post("/", (request, response, next) => {
     let values = [request.body.name, request.decoded.email]
     pool.query(insert, values)
         .then(result => {
-            console.log(result)
             request.body.chatId = result.rows[0].chatid
             next()
         }).catch(err => {
