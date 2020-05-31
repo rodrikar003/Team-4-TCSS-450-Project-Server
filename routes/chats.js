@@ -528,7 +528,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
         .then(result => {
             response.send({
                 success: true,
-                email: request.params.membeid
+                email: request.params.memberid
             })
         }).catch(err => {
             response.status(400).send({
