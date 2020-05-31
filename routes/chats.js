@@ -46,27 +46,14 @@ router.post("/", (request, response, next) => {
         next()
     }
 }, (request, response, next) => {
-    //convert jwt to email
-    let insert = `SELECT Email FROM Members WHERE MemberId=$1`
-    let values = [request.decoded.memberid]
-    pool.query(insert, values)
-        .then(result => {
-            request.params.email = result.rows[0].email
-            next()
-        }).catch(err => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: err
-            })
-        })
-}, (request, response, next) => {
     // insert new chat room
     let insert = `INSERT INTO Chats(Name, Email)
                   VALUES ($1, $2)
                   RETURNING ChatId`
-    let values = [request.body.name, request.params.email]
+    let values = [request.body.name, request.decoded.email]
     pool.query(insert, values)
         .then(result => {
+            console.log(result)
             request.body.chatId = result.rows[0].chatId
             next()
         }).catch(err => {
