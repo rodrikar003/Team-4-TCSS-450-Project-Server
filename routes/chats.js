@@ -96,6 +96,128 @@ router.post("/", (request, response, next) => {
 })
 
 /**
+ * @api {delete} /chats/:chatId Requests to delete a chat room
+ * @apiName DeleteChatRoom
+ * @apiGroup Chats
+ * 
+ * @apiDescription Removes all traces of the chat from database  
+ * 
+ * @apiParam {Number} chatId the chat room to delete
+ * 
+ * @apiSuccess {boolean} success true when the chat room is deleted
+ * 
+ * @apiError (404: Chat Not Found) {String} message "chatId not found"
+ * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
+ * @apiError (400: Missing Parameters) {String} message "Missing required information"
+ * 
+ * @apiError (400: SQL Error) {String} message the reported SQL error details
+ * 
+ * @apiUse JSONError
+ */ 
+router.delete("/:chatId", (request, response, next) => {
+    //validate on empty parameters
+    if (!request.params.chatId) {
+        response.status(400).send({
+            message: "Missing required information"
+        })
+    } else if (isNaN(request.params.chatId)) {
+        response.status(400).send({
+            message: "Malformed parameter. chatId must be a number"
+        })
+    } else {
+        next()
+    }
+}, (request, response, next) => {
+    //validate chat id exists
+    let query = 'SELECT * FROM CHATS WHERE ChatId=$1'
+    let values = [request.params.chatId]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Chat ID not found"
+                })
+            } else {
+                next()
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+}, (request, response, next) => {
+    //validate jwt matches owner of chatroom
+    let query =  `SELECT Email FROM Chats
+                    WHERE ChatId=$1`
+    let values = [request.params.chatId]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Chat ID not found"
+                })
+            } else {
+                if (result.rows[0].email != request.decoded.email) {
+                    response.status(404).send({
+                        message: "User is not owner of chat room"
+                    })
+                } else {
+                    next()
+                }
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+}, (request, response, next) => {
+    //Delete the respective rows from chatmembers
+    let insert = `DELETE FROM ChatMembers where ChatId=$1`
+    let values = [request.params.chatId]
+    pool.query(insert, values)
+        .then(result => {
+            next()
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: err
+            })
+        })
+}, (request, response, next) => {
+    //Delete the respective rows from messages
+    let insert = `DELETE FROM Messages where ChatId=$1`
+    let values = [request.params.chatId]
+    pool.query(insert, values)
+        .then(result => {
+            next()
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: err
+            })
+        })
+}, (request, response) => {
+    //Delete the respective rows from chats
+    let insert = `DELETE FROM Chats where ChatId=$1`
+    let values = [request.params.chatId]
+    pool.query(insert, values)
+        .then(result => {
+            response.send({
+                success: true
+            })
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: err
+            })
+        })
+})
+
+/**
  * @api {put} /chats/ Request add a user to a chat
  * @apiName PutChats
  * @apiGroup Chats
@@ -567,127 +689,5 @@ router.get("/", (request, response, next) => {
             })
         })
 });
-
-/**
- * @api {delete} /chats/:chatId Requests to delete a chat room
- * @apiName DeleteChatRoom
- * @apiGroup Chats
- * 
- * @apiDescription Removes all traces of the chat from database  
- * 
- * @apiParam {Number} chatId the chat room to delete
- * 
- * @apiSuccess {boolean} success true when the chat room is deleted
- * 
- * @apiError (404: Chat Not Found) {String} message "chatId not found"
- * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
- * @apiError (400: Missing Parameters) {String} message "Missing required information"
- * 
- * @apiError (400: SQL Error) {String} message the reported SQL error details
- * 
- * @apiUse JSONError
- */ 
-router.delete("/:chatId", (request, response, next) => {
-    //validate on empty parameters
-    if (!request.params.chatId) {
-        response.status(400).send({
-            message: "Missing required information"
-        })
-    } else if (isNaN(request.params.chatId)) {
-        response.status(400).send({
-            message: "Malformed parameter. chatId must be a number"
-        })
-    } else {
-        next()
-    }
-}, (request, response, next) => {
-    //validate chat id exists
-    let query = 'SELECT * FROM CHATS WHERE ChatId=$1'
-    let values = [request.params.chatId]
-
-    pool.query(query, values)
-        .then(result => {
-            if (result.rowCount == 0) {
-                response.status(404).send({
-                    message: "Chat ID not found"
-                })
-            } else {
-                next()
-            }
-        }).catch(error => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: error
-            })
-        })
-}, (request, response, next) => {
-    //validate jwt matches owner of chatroom
-    let query =  `SELECT Email FROM Chats
-                    WHERE ChatId=$1`
-    let values = [request.body.chatId]
-
-    pool.query(query, values)
-        .then(result => {
-            if (result.rowCount == 0) {
-                response.status(404).send({
-                    message: "Chat ID not found"
-                })
-            } else {
-                if (result.rows[0].email != request.decoded.email) {
-                    response.status(404).send({
-                        message: "User is not owner of chat room"
-                    })
-                } else {
-                    next()
-                }
-            }
-        }).catch(error => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: error
-            })
-        })
-}, (request, response, next) => {
-    //Delete the respective rows from chatmembers
-    let insert = `DELETE FROM ChatMembers where ChatId=$1`
-    let values = [request.params.chatId]
-    pool.query(insert, values)
-        .then(result => {
-            next()
-        }).catch(err => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: err
-            })
-        })
-}, (request, response, next) => {
-    //Delete the respective rows from messages
-    let insert = `DELETE FROM Messages where chatId=$1`
-    let values = [request.params.chatId]
-    pool.query(insert, values)
-        .then(result => {
-            next()
-        }).catch(err => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: err
-            })
-        })
-}, (request, response) => {
-    //Delete the respective rows from chats
-    let insert = `DELETE FROM Chats where ChatId=$1`
-    let values = [request.params.chatId]
-    pool.query(insert, values)
-        .then(result => {
-            response.send({
-                success: true
-            })
-        }).catch(err => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: err
-            })
-        })
-})
 
 module.exports = router
