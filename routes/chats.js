@@ -71,7 +71,8 @@ router.post("/", (request, response, next) => {
         .then(result => {
             response.send({
                 success: true, 
-                chatId: request.body.chatId
+                chatId: request.body.chatId,
+                chatName: request.body.name
             })
         }).catch(err => {
             response.status(400).send({
