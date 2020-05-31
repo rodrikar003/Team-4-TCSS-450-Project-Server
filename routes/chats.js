@@ -157,12 +157,12 @@ router.delete("/:chatId", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat ID not found"
+                    message: "Chat not found"
                 })
             } else {
                 if (result.rows[0].email != request.decoded.email) {
                     response.status(404).send({
-                        message: "User is not owner of chat room"
+                        message: "Only the chat room owner can delete the chat room"
                     })
                 } else {
                     next()
@@ -259,7 +259,7 @@ router.put("/", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat ID not found"
+                    message: "Chat not found"
                 })
             } else {
                 request.body.chatName = result.rows[0].name
@@ -281,12 +281,12 @@ router.put("/", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat ID not found"
+                    message: "Chat not found"
                 })
             } else {
                 if (result.rows[0].email != request.decoded.email) {
                     response.status(404).send({
-                        message: "User is not owner of chat room"
+                        message: "Only chat room owners can add/delete users"
                     })
                 } else {
                     next()
@@ -307,7 +307,7 @@ router.put("/", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "email not found"
+                    message: "Email not found"
                 })
             } else {
                 request.body.memberid = result.rows[0].memberid
@@ -351,7 +351,7 @@ router.put("/", (request, response, next) => {
         .then(result => {
             if (result.rowCount > 0) {
                 response.status(400).send({
-                    message: "user already joined"
+                    message: "User already in chat"
                 })
             } else {
                 next()
@@ -449,7 +449,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat ID not found"
+                    message: "Chat not found"
                 })
             } else {
                 next()
@@ -469,7 +469,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "email not found"
+                    message: "Email not found"
                 })
             } else {
                 request.params.memberid = result.rows[0].memberid
@@ -492,7 +492,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
                 next()
             } else {
                 response.status(400).send({
-                    message: "user not in chat"
+                    message: "User not in chat"
                 })
             }
         }).catch(error => {
@@ -512,13 +512,13 @@ router.delete("/:chatId/:email", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat ID not found"
+                    message: "Chat not found"
                 })
             } else {
                 if (result.rows[0].email != request.decoded.email
                     && request.params.email != request.decoded.email) {
                     response.status(404).send({
-                        message: "User is not owner of chat room"
+                        message: "Only chat room owners can add/delete users"
                     })
                 } else {
                     next()
