@@ -18,23 +18,20 @@ let pushy = require('../utilities/utils').pushy
 
 /**
  * @api {post} /chats/ Request to add a chat
- * @apiName PostChats
+ * @apiName AddChat
  * @apiGroup Chats
  * 
  * @apiHeader {String} authorization Valid JSON Web Token JWT
  * @apiParam {String} name the name for the chat
  * 
- * @apiSuccess (Success 201) {boolean} success true when the name is inserted
+ * @apiSuccess (Success 201) {boolean} success true when the chat room is created
  * @apiSuccess (Success 201) {Number} chatId the generated chatId
- * 
- * @apiError (400: Unknown user) {String} message "unknown email address"
- * 
+ * @apiSuccess (Success 201) {String} chatName the name of the chat room
+ *  
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
  * 
  * @apiError (400: SQL Error) {String} message the reported SQL error details
- * 
- * @apiError (400: Unknow Chat ID) {String} message "invalid chat id"
- * 
+ *  
  * @apiUse JSONError
  */ 
 router.post("/", (request, response, next) => {
@@ -84,7 +81,7 @@ router.post("/", (request, response, next) => {
 
 /**
  * @api {delete} /chats/:chatId Requests to delete a chat room
- * @apiName DeleteChatRoom
+ * @apiName DeleteChat
  * @apiGroup Chats
  * 
  * @apiDescription Removes all traces of the chat from database  
@@ -93,7 +90,8 @@ router.post("/", (request, response, next) => {
  * 
  * @apiSuccess {boolean} success true when the chat room is deleted
  * 
- * @apiError (404: Chat Not Found) {String} message "chatId not found"
+ * @apiError (404: Chat Not Found) {String} message "Chat ID not found"
+ * @apiError (404: Unauthorized) {String} message "Only the chat room owner can delete the chat room"
  * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
  * 
@@ -144,7 +142,7 @@ router.delete("/:chatId", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat not found"
+                    message: "Chat ID not found"
                 })
             } else {
                 if (result.rows[0].email != request.decoded.email) {
@@ -206,8 +204,8 @@ router.delete("/:chatId", (request, response, next) => {
 })
 
 /**
- * @api {put} /chats/ Request add a user to a chat
- * @apiName PutChats
+ * @api {put} /chats/ Request add a user to a chat room
+ * @apiName AddUserToChat
  * @apiGroup Chats
  * 
  * @apiDescription Adds the user associated with the email in the body. 
@@ -219,10 +217,12 @@ router.delete("/:chatId", (request, response, next) => {
  * 
  * @apiSuccess {boolean} success true when the name is inserted
  * 
- * @apiError (404: Chat Not Found) {String} message "chatId not found"
- * @apiError (404: Email Not Found) {String} message "email not found"
+ * @apiError (404: Chat Not Found) {String} message "Chat ID not found"
+ * @apiError (404: Unauthorized) {String} message "Only chat room owners can add/delete users"
+ * @apiError (404: Not contacts) {String} message "User is not in contact list"
+ * @apiError (404: Email Not Found) {String} message "Email not found"
  * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
- * @apiError (400: Duplicate Email) {String} message "user already joined"
+ * @apiError (400: Duplicate Email) {String} message "User already in chat room"
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
  * 
  * @apiError (400: SQL Error) {String} message the reported SQL error details
@@ -246,7 +246,7 @@ router.put("/", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat not found"
+                    message: "Chat ID not found"
                 })
             } else {
                 request.body.chatName = result.rows[0].name
@@ -268,7 +268,7 @@ router.put("/", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat not found"
+                    message: "Chat ID not found"
                 })
             } else {
                 if (result.rows[0].email != request.decoded.email) {
@@ -338,7 +338,7 @@ router.put("/", (request, response, next) => {
         .then(result => {
             if (result.rowCount > 0) {
                 response.status(400).send({
-                    message: "User already in chat"
+                    message: "User already in chat room"
                 })
             } else {
                 next()
@@ -393,7 +393,7 @@ router.put("/", (request, response, next) => {
 
 /**
  * @api {delete} /chats/:chatId/:email Request delete a user from a chat
- * @apiName DeleteChats
+ * @apiName RemoveUserFromChat
  * @apiGroup Chats
  * 
  * @apiDescription Does not delete the user associated with the required JWT but 
@@ -404,10 +404,11 @@ router.put("/", (request, response, next) => {
  * 
  * @apiSuccess {boolean} success true when the name is deleted
  * 
- * @apiError (404: Chat Not Found) {String} message "chatId not found"
- * @apiError (404: Email Not Found) {String} message "email not found"
+ * @apiError (404: Chat Not Found) {String} message "Chat ID not found"
+ * @apiError (404: Email Not Found) {String} message "Email not found"
+ * @apiError (404: Unauthorized) {String} message "Only chat room owners can add/delete users"
  * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
- * @apiError (400: Duplicate Email) {String} message "user not in chat"
+ * @apiError (400: Duplicate Email) {String} message "User not in chat"
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
  * 
  * @apiError (400: SQL Error) {String} message the reported SQL error details
@@ -436,7 +437,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat not found"
+                    message: "Chat ID not found"
                 })
             } else {
                 next()
@@ -499,7 +500,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat not found"
+                    message: "Chat ID not found"
                 })
             } else {
                 if (result.rows[0].email != request.decoded.email
@@ -542,16 +543,16 @@ router.delete("/:chatId/:email", (request, response, next) => {
 
 /**
  * @api {get} /chats/:chatId? Request to get the emails of all users in a chat
- * @apiName GetChats
+ * @apiName GetUsersInChat
  * @apiGroup Chats
  * 
  * @apiHeader {String} authorization Valid JSON Web Token JWT
  * 
  * @apiParam {Number} chatId the chat to look up. 
  * 
- * @apiSuccess {Number} rowCount the number of messages returned
- * @apiSuccess {Object[]} members List of members in the chat
- * @apiSuccess {String} messages.email The email for the member in the chat
+ * @apiSuccess {Number} rowCount the number of emails returned
+ * @apiSuccess {Object[]} rows List of members in the chat
+ * @apiSuccess {String} rows.email The email for the member in the chat
  * 
  * @apiError (404: ChatId Not Found) {String} message "Chat ID Not Found"
  * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
@@ -625,10 +626,12 @@ router.get("/:chatId", (request, response, next) => {
  * @apiHeader {String} authorization Valid JSON Web Token JWT
  *  
  * @apiSuccess {Number} rowCount the number of chat rooms returned
- * @apiSuccess {Object[]} chatRooms List of chatIds of chat rooms user is in
- * @apiSuccess {String} messages.chatId The chatId for the chat room
+ * @apiSuccess {Object[]} rows List of chatIds of chat rooms user is in
+ * @apiSuccess {String} rows.chatid The id of the chat room
+ * @apiSuccess {String} rows.name The name of the chat room
+ * @apiSuccess {String} rows.email The owner of the chat room's email
  * 
- * @apiError (404: Member Not Found) {String} message "Member Not Found"
+ * @apiError (404: Member Not Found) {String} message "Member not Found"
  * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
  * @apiError (400: Missing Parameters) {String} message "Missing required information"
  * 
@@ -645,7 +648,7 @@ router.get("/", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Member Not Found"
+                    message: "Member not Found"
                 })
             } else {
                 //user found
