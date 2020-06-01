@@ -39,7 +39,7 @@ DELETE FROM Chats;
 
 --Create Global Chat room, ChatId 1
 INSERT INTO
-    chats(chatid, name, Email)
+    chats(ChatId, name, Email)
 VALUES
     (1, 'Global Chat 1', 'test1@test.com')
 RETURNING *;
@@ -368,7 +368,7 @@ RETURNING *;
 
 --Create Global Chat room, ChatId 2
 INSERT INTO
-    chats(chatid, name, Email)
+    chats(ChatId, name, Email)
 VALUES
     (2, 'Global Chat 2', 'test2@test.com')
 RETURNING *;
@@ -697,7 +697,7 @@ RETURNING *;
 
 --Create Global Chat room, ChatId 3
 INSERT INTO
-    chats(chatid, name, Email)
+    chats(ChatId, name, Email)
 VALUES
     (3, 'Global Chat 3', 'test3@test.com')
 RETURNING *;

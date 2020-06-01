@@ -10,7 +10,27 @@ function sendMessageToIndividual(token, message) {
     var data = {
         "type": "msg",
         "message": message,
-        "chatid": message.chatid
+        "chatId": message.chatid
+    }
+
+    // Send push notification via the Send Notifications API 
+    // https://pushy.me/docs/api/send-notifications 
+    pushyAPI.sendPushNotification(data, token, {}, function (err, id) {
+        // Log errors to console 
+        if (err) {
+            return console.log('Fatal Error', err);
+        }
+
+        // Log success 
+        console.log('Push sent successfully! (ID: ' + id + ')')
+    })
+}
+
+function addIndividualToChatRoom(token, chatRoom) {
+    var data = {
+        "type": "chat",
+        "chatRoom": chatRoom,
+        "chatId": chatRoom.chatId
     }
 
     // Send push notification via the Send Notifications API 
@@ -29,5 +49,6 @@ function sendMessageToIndividual(token, message) {
 //add other "sendYypeToIndividual" functions here. Don't forget to exprot them
 
 module.exports = {
-    sendMessageToIndividual
+    sendMessageToIndividual,
+    addIndividualToChatRoom
 }

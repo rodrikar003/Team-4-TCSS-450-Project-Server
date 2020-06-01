@@ -9,7 +9,7 @@ var router = express.Router()
 //This allows parsing of the body of POST requests, that are encoded in JSON
 router.use(require("body-parser").json())
 
-let msg_functions = require('../utilities/utils').messaging
+let pushy = require('../utilities/utils').pushy
 
 /**
  * @apiDefine JSONError
@@ -69,7 +69,7 @@ router.post("/", (request, response, next) => {
             }
         }).catch(error => {
             response.status(400).send({
-                message: "SQL Error on chatid check",
+                message: "SQL Error on chatId check",
                 error: error
             })
         })
@@ -131,8 +131,9 @@ router.post("/", (request, response, next) => {
             .then(result => {
                 console.log(request.decoded.email)
                 console.log(request.body.message)
+                console.log(response.message)
                 result.rows.forEach(entry => 
-                    msg_functions.sendMessageToIndividual(
+                    pushy.sendMessageToIndividual(
                         entry.token, 
                         response.message))
                 response.send({
@@ -189,7 +190,7 @@ router.get("/:chatId?/:messageId?", (request, response, next) => {
             next()
         }
     }, (request, response, next) => {
-        //validate that the ChatId exisits
+        //validate that the chatId exisits
         let query = 'SELECT * FROM CHATS WHERE ChatId=$1'
         let values = [request.params.chatId]
 

@@ -65,8 +65,8 @@ function getHash(pw, salt) {
 } 
 
 
-let messaging = require('./pushy_utilities.js')
+let pushy = require('./pushy_utilities.js')
 
 module.exports = { 
-    pool, getHash, sendEmail, validateRegistration, messaging
+    pool, getHash, sendEmail, validateRegistration, pushy
 };

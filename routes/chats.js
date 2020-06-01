@@ -9,6 +9,8 @@ var router = express.Router()
 //This allows parsing of the body of POST requests, that are encoded in JSON
 router.use(require("body-parser").json())
 
+let pushy = require('../utilities/utils').pushy
+
 /**
  * @apiDefine JSONError
  * @apiError (400: JSON Error) {String} message "malformed JSON in parameters"
@@ -44,28 +46,14 @@ router.post("/", (request, response, next) => {
         next()
     }
 }, (request, response, next) => {
-    //convert jwt to email
-    let insert = `SELECT Email FROM Members WHERE MemberId=$1`
-    let values = [request.decoded.memberid]
-    pool.query(insert, values)
-        .then(result => {
-            request.params.email = result.rows[0].email
-            next()
-        }).catch(err => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: err
-            })
-        })
-}, (request, response, next) => {
     // insert new chat room
     let insert = `INSERT INTO Chats(Name, Email)
                   VALUES ($1, $2)
                   RETURNING ChatId`
-    let values = [request.body.name, request.params.email]
+    let values = [request.body.name, request.decoded.email]
     pool.query(insert, values)
         .then(result => {
-            request.body.chatid = result.rows[0].chatid
+            request.body.chatId = result.rows[0].chatid
             next()
         }).catch(err => {
             response.status(400).send({
@@ -78,12 +66,136 @@ router.post("/", (request, response, next) => {
     let insert = `INSERT INTO ChatMembers(ChatId, MemberId)
                   VALUES ($1, $2)
                   RETURNING *`
-    let values = [request.body.chatid, request.decoded.memberid]
+    let values = [request.body.chatId, request.decoded.memberid]
     pool.query(insert, values)
         .then(result => {
             response.send({
                 success: true, 
-                chatID: request.body.chatid
+                chatId: request.body.chatId,
+                chatName: request.body.name
+            })
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: err
+            })
+        })
+})
+
+/**
+ * @api {delete} /chats/:chatId Requests to delete a chat room
+ * @apiName DeleteChatRoom
+ * @apiGroup Chats
+ * 
+ * @apiDescription Removes all traces of the chat from database  
+ * 
+ * @apiParam {Number} chatId the chat room to delete
+ * 
+ * @apiSuccess {boolean} success true when the chat room is deleted
+ * 
+ * @apiError (404: Chat Not Found) {String} message "chatId not found"
+ * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
+ * @apiError (400: Missing Parameters) {String} message "Missing required information"
+ * 
+ * @apiError (400: SQL Error) {String} message the reported SQL error details
+ * 
+ * @apiUse JSONError
+ */ 
+router.delete("/:chatId", (request, response, next) => {
+    //validate on empty parameters
+    if (!request.params.chatId) {
+        response.status(400).send({
+            message: "Missing required information"
+        })
+    } else if (isNaN(request.params.chatId)) {
+        response.status(400).send({
+            message: "Malformed parameter. chatId must be a number"
+        })
+    } else {
+        next()
+    }
+}, (request, response, next) => {
+    //validate chat id exists
+    let query = 'SELECT * FROM CHATS WHERE ChatId=$1'
+    let values = [request.params.chatId]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Chat ID not found"
+                })
+            } else {
+                next()
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+}, (request, response, next) => {
+    //validate jwt matches owner of chatroom
+    let query =  `SELECT Email FROM Chats
+                    WHERE ChatId=$1`
+    let values = [request.params.chatId]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Chat not found"
+                })
+            } else {
+                if (result.rows[0].email != request.decoded.email) {
+                    response.status(404).send({
+                        message: "Only the chat room owner can delete the chat room"
+                    })
+                } else {
+                    next()
+                }
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+}, (request, response, next) => {
+    //Delete the respective rows from chatmembers
+    let insert = `DELETE FROM ChatMembers where ChatId=$1`
+    let values = [request.params.chatId]
+    pool.query(insert, values)
+        .then(result => {
+            next()
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: err
+            })
+        })
+}, (request, response, next) => {
+    //Delete the respective rows from messages
+    let insert = `DELETE FROM Messages where ChatId=$1`
+    let values = [request.params.chatId]
+    pool.query(insert, values)
+        .then(result => {
+            next()
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: err
+            })
+        })
+}, (request, response) => {
+    //Delete the respective rows from chats
+    let insert = `DELETE FROM Chats where ChatId=$1`
+    let values = [request.params.chatId]
+    pool.query(insert, values)
+        .then(result => {
+            response.send({
+                success: true,
+                chatId: request.params.chatId
             })
         }).catch(err => {
             response.status(400).send({
@@ -107,7 +219,7 @@ router.post("/", (request, response, next) => {
  * 
  * @apiSuccess {boolean} success true when the name is inserted
  * 
- * @apiError (404: Chat Not Found) {String} message "chatID not found"
+ * @apiError (404: Chat Not Found) {String} message "chatId not found"
  * @apiError (404: Email Not Found) {String} message "email not found"
  * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
  * @apiError (400: Duplicate Email) {String} message "user already joined"
@@ -127,16 +239,17 @@ router.put("/", (request, response, next) => {
     }
 }, (request, response, next) => {
     //validate chat id exists
-    let query = 'SELECT * FROM CHATS WHERE ChatId=$1'
+    let query = 'SELECT Name FROM CHATS WHERE ChatId=$1'
     let values = [request.body.chatId]
 
     pool.query(query, values)
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat ID not found"
+                    message: "Chat not found"
                 })
             } else {
+                request.body.chatName = result.rows[0].name
                 next()
             }
         }).catch(error => {
@@ -145,27 +258,22 @@ router.put("/", (request, response, next) => {
                 error: error
             })
         })
-},(request, response, next) => {
+}, (request, response, next) => {
     //validate jwt matches owner of chatroom
-    let query =  `SELECT MemberId FROM Members
-                WHERE Email IN (
-                    SELECT Email 
-                    FROM Chats
-                    WHERE chatid=$1
-                )
-                GROUP BY MemberId`
+    let query =  `SELECT Email FROM Chats
+                    WHERE ChatId=$1`
     let values = [request.body.chatId]
 
     pool.query(query, values)
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "Chat ID not found"
+                    message: "Chat not found"
                 })
             } else {
-                if (result.rows[0].memberid != request.decoded.memberid) {
+                if (result.rows[0].email != request.decoded.email) {
                     response.status(404).send({
-                        message: "User is not owner of chat room"
+                        message: "Only chat room owners can add/delete users"
                     })
                 } else {
                     next()
@@ -186,7 +294,7 @@ router.put("/", (request, response, next) => {
         .then(result => {
             if (result.rowCount == 0) {
                 response.status(404).send({
-                    message: "email not found"
+                    message: "Email not found"
                 })
             } else {
                 request.body.memberid = result.rows[0].memberid
@@ -199,36 +307,229 @@ router.put("/", (request, response, next) => {
             })
         })
 }, (request, response, next) => {
-        //validate email does not already exist in the chat
-        let query = 'SELECT * FROM ChatMembers WHERE ChatId=$1 AND MemberId=$2'
-        let values = [request.body.chatId, request.body.memberid]
-    
-        pool.query(query, values)
-            .then(result => {
-                if (result.rowCount > 0) {
-                    response.status(400).send({
-                        message: "user already joined"
+    //validate the two users are contacts
+    let query = `SELECT * FROM Contacts
+                    WHERE ((MemberId_A=$1 AND MemberId_B=$2)
+                    OR (MemberId_B=$1 AND MemberId_B=$1))
+                    AND Verified=1`
+    let values = [request.body.memberid, request.decoded.memberid]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "User is not in contact list"
+                })
+            } else {
+                next()
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+}, (request, response, next) => {
+    //validate email does not already exist in the chat
+    let query = 'SELECT * FROM ChatMembers WHERE ChatId=$1 AND MemberId=$2'
+    let values = [request.body.chatId, request.body.memberid]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount > 0) {
+                response.status(400).send({
+                    message: "User already in chat"
+                })
+            } else {
+                next()
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+
+}, (request, response, next) => {
+    //Insert the memberId into the chat
+    let insert = `INSERT INTO ChatMembers(ChatId, MemberId)
+                  VALUES ($1, $2)`
+    let values = [request.body.chatId, request.body.memberid]
+    pool.query(insert, values)
+        .then(result => {
+            next()
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: err
+            })
+        })
+}, (request, response) => {
+    let query = `SELECT token FROM Push_Token
+                    WHERE MemberId=$1`
+    let values = [request.body.memberid]
+
+    let chatRoom = {
+        chatId: request.body.chatId,
+        chatName: request.body.chatName,
+        owner: request.decoded.email
+    }
+
+    pool.query(query, values)
+        .then(result => {
+            console.log(chatRoom);
+            pushy.addIndividualToChatRoom(result.rows[0].token, chatRoom);
+            response.send({
+                success: true,
+                email: request.body.email
+            })
+        }).catch(err => {
+            response.status(400).send({
+                message: "SQL Error on select from push token",
+                error: err
+            })
+        })
+})
+
+/**
+ * @api {delete} /chats/:chatId/:email Request delete a user from a chat
+ * @apiName DeleteChats
+ * @apiGroup Chats
+ * 
+ * @apiDescription Does not delete the user associated with the required JWT but 
+ * instead deletes the user based on the email parameter.  
+ * 
+ * @apiParam {Number} chatId the chat to delete the user from
+ * @apiParam {String} email the email of the user to delete
+ * 
+ * @apiSuccess {boolean} success true when the name is deleted
+ * 
+ * @apiError (404: Chat Not Found) {String} message "chatId not found"
+ * @apiError (404: Email Not Found) {String} message "email not found"
+ * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
+ * @apiError (400: Duplicate Email) {String} message "user not in chat"
+ * @apiError (400: Missing Parameters) {String} message "Missing required information"
+ * 
+ * @apiError (400: SQL Error) {String} message the reported SQL error details
+ * 
+ * @apiUse JSONError
+ */ 
+router.delete("/:chatId/:email", (request, response, next) => {
+    //validate on empty parameters
+    if (!request.params.chatId || !request.params.email) {
+        response.status(400).send({
+            message: "Missing required information"
+        })
+    } else if (isNaN(request.params.chatId)) {
+        response.status(400).send({
+            message: "Malformed parameter. chatId must be a number"
+        })
+    } else {
+        next()
+    }
+}, (request, response, next) => {
+    //validate chat id exists
+    let query = 'SELECT * FROM CHATS WHERE ChatId=$1'
+    let values = [request.params.chatId]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Chat not found"
+                })
+            } else {
+                next()
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+}, (request, response, next) => {
+    //validate email exists AND convert it to the associated memberId
+    let query = 'SELECT MemberID FROM Members WHERE Email=$1'
+    let values = [request.params.email]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Email not found"
+                })
+            } else {
+                request.params.memberid = result.rows[0].memberid
+                next()
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+}, (request, response, next) => {
+    //validate email exists in the chat
+    let query = 'SELECT * FROM ChatMembers WHERE ChatId=$1 AND MemberId=$2'
+    let values = [request.params.chatId, request.params.memberid]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount > 0) {
+                next()
+            } else {
+                response.status(400).send({
+                    message: "User not in chat"
+                })
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
+            })
+        })
+
+}, (request, response, next) => {
+    //validate jwt matches owner of chatroom or member being deleted
+    let query =  `SELECT Email FROM Chats
+                    WHERE ChatId=$1`
+    let values = [request.params.chatId]
+
+    pool.query(query, values)
+        .then(result => {
+            if (result.rowCount == 0) {
+                response.status(404).send({
+                    message: "Chat not found"
+                })
+            } else {
+                if (result.rows[0].email != request.decoded.email
+                    && request.params.email != request.decoded.email) {
+                    response.status(404).send({
+                        message: "Only chat room owners can add/delete users"
                     })
                 } else {
                     next()
                 }
-            }).catch(error => {
-                response.status(400).send({
-                    message: "SQL Error",
-                    error: error
-                })
+            }
+        }).catch(error => {
+            response.status(400).send({
+                message: "SQL Error",
+                error: error
             })
-
+        })
 }, (request, response) => {
-    //Insert the memberId into the chat
-    let insert = `INSERT INTO ChatMembers(ChatId, MemberId)
-                  VALUES ($1, $2)
+    //Delete the memberId from the chat
+    let insert = `DELETE FROM ChatMembers
+                  WHERE ChatId=$1
+                  AND MemberId=$2
                   RETURNING *`
-    let values = [request.body.chatId, request.body.memberid]
+    let values = [request.params.chatId, request.params.memberid]
     pool.query(insert, values)
         .then(result => {
             response.send({
-                success: true
+                success: true,
+                chatId: request.params.chatId,
+                email: request.params.email
             })
         }).catch(err => {
             response.status(400).send({
@@ -319,13 +620,13 @@ router.get("/:chatId", (request, response, next) => {
  * @apiName GetChats
  * @apiGroup Chats
  * 
- * @apiDescription Returns the chatids of every chat the user associated with the required JWT is a part of
+ * @apiDescription Returns the chatIds of every chat the user associated with the required JWT is a part of
  * 
  * @apiHeader {String} authorization Valid JSON Web Token JWT
  *  
  * @apiSuccess {Number} rowCount the number of chat rooms returned
  * @apiSuccess {Object[]} chatRooms List of chatIds of chat rooms user is in
- * @apiSuccess {String} messages.chatId The chatid for the chat room
+ * @apiSuccess {String} messages.chatId The chatId for the chat room
  * 
  * @apiError (404: Member Not Found) {String} message "Member Not Found"
  * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
@@ -359,12 +660,12 @@ router.get("/", (request, response, next) => {
 }, (request, response) => {
     //Retrive the chats
     let query =  `SELECT * FROM Chats
-                WHERE chatid IN (
-                    SELECT DISTINCT chatid 
+                WHERE ChatId IN (
+                    SELECT DISTINCT ChatId 
                     FROM ChatMembers
                     WHERE memberid=$1
                 )
-                GROUP BY chatid`
+                GROUP BY ChatId`
     let values = [request.decoded.memberid]
     pool.query(query, values)
         .then(result => {
@@ -379,286 +680,5 @@ router.get("/", (request, response, next) => {
             })
         })
 });
-
-
-
-/**
- * @api {delete} /chats/:chatId/:email Request delete a user from a chat
- * @apiName DeleteChats
- * @apiGroup Chats
- * 
- * @apiDescription Does not delete the user associated with the required JWT but 
- * instead deletes the user based on the email parameter.  
- * 
- * @apiParam {Number} chatId the chat to delete the user from
- * @apiParam {String} email the email of the user to delete
- * 
- * @apiSuccess {boolean} success true when the name is deleted
- * 
- * @apiError (404: Chat Not Found) {String} message "chatID not found"
- * @apiError (404: Email Not Found) {String} message "email not found"
- * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
- * @apiError (400: Duplicate Email) {String} message "user not in chat"
- * @apiError (400: Missing Parameters) {String} message "Missing required information"
- * 
- * @apiError (400: SQL Error) {String} message the reported SQL error details
- * 
- * @apiUse JSONError
- */ 
-router.delete("/:chatId/:email", (request, response, next) => {
-    //validate on empty parameters
-    if (!request.params.chatId || !request.params.email) {
-        response.status(400).send({
-            message: "Missing required information"
-        })
-    } else if (isNaN(request.params.chatId)) {
-        response.status(400).send({
-            message: "Malformed parameter. chatId must be a number"
-        })
-    } else {
-        next()
-    }
-}, (request, response, next) => {
-    //validate chat id exists
-    let query = 'SELECT * FROM CHATS WHERE ChatId=$1'
-    let values = [request.params.chatId]
-
-    pool.query(query, values)
-        .then(result => {
-            if (result.rowCount == 0) {
-                response.status(404).send({
-                    message: "Chat ID not found"
-                })
-            } else {
-                next()
-            }
-        }).catch(error => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: error
-            })
-        })
-}, (request, response, next) => {
-    //validate email exists AND convert it to the associated memberId
-    let query = 'SELECT MemberID FROM Members WHERE Email=$1'
-    let values = [request.params.email]
-
-    pool.query(query, values)
-        .then(result => {
-            if (result.rowCount == 0) {
-                response.status(404).send({
-                    message: "email not found"
-                })
-            } else {
-                request.params.memberid = result.rows[0].memberid
-                next()
-            }
-        }).catch(error => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: error
-            })
-        })
-}, (request, response, next) => {
-    //validate email exists in the chat
-    let query = 'SELECT * FROM ChatMembers WHERE ChatId=$1 AND MemberId=$2'
-    let values = [request.params.chatId, request.params.memberid]
-
-    pool.query(query, values)
-        .then(result => {
-            if (result.rowCount > 0) {
-                next()
-            } else {
-                response.status(400).send({
-                    message: "user not in chat"
-                })
-            }
-        }).catch(error => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: error
-            })
-        })
-
-}, (request, response, next) => {
-    //validate jwt matches owner of chatroom or member being deleted
-    let query =  `SELECT MemberId FROM Members
-                WHERE Email IN (
-                    SELECT Email 
-                    FROM Chats
-                    WHERE chatid=$1
-                )
-                GROUP BY MemberId`
-    let values = [request.params.chatId]
-
-    pool.query(query, values)
-        .then(result => {
-            if (result.rowCount == 0) {
-                response.status(404).send({
-                    message: "Chat ID not found"
-                })
-            } else {
-                if (result.rows[0].memberid != request.decoded.memberid
-                    && request.decoded.memberid != request.params.memberid) {
-                    response.status(404).send({
-                        message: "User is not owner of chat room"
-                    })
-                } else {
-                    next()
-                }
-            }
-        }).catch(error => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: error
-            })
-        })
-}, (request, response) => {
-    //Delete the memberId from the chat
-    let insert = `DELETE FROM ChatMembers
-                  WHERE ChatId=$1
-                  AND MemberId=$2
-                  RETURNING *`
-    let values = [request.params.chatId, request.params.memberid]
-    pool.query(insert, values)
-        .then(result => {
-            response.send({
-                success: true
-            })
-        }).catch(err => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: err
-            })
-        })
-    }
-)
-
-/**
- * @api {delete} /chats/:chatId Requests to delete a chat room
- * @apiName DeleteChatRoom
- * @apiGroup Chats
- * 
- * @apiDescription Removes all traces of the chat from database  
- * 
- * @apiParam {Number} chatId the chat room to delete
- * 
- * @apiSuccess {boolean} success true when the chat room is deleted
- * 
- * @apiError (404: Chat Not Found) {String} message "chatID not found"
- * @apiError (400: Invalid Parameter) {String} message "Malformed parameter. chatId must be a number" 
- * @apiError (400: Missing Parameters) {String} message "Missing required information"
- * 
- * @apiError (400: SQL Error) {String} message the reported SQL error details
- * 
- * @apiUse JSONError
- */ 
-router.delete("/:chatId", (request, response, next) => {
-    //validate on empty parameters
-    if (!request.params.chatId) {
-        response.status(400).send({
-            message: "Missing required information"
-        })
-    } else if (isNaN(request.params.chatId)) {
-        response.status(400).send({
-            message: "Malformed parameter. chatId must be a number"
-        })
-    } else {
-        next()
-    }
-}, (request, response, next) => {
-    //validate chat id exists
-    let query = 'SELECT * FROM CHATS WHERE ChatId=$1'
-    let values = [request.params.chatId]
-
-    pool.query(query, values)
-        .then(result => {
-            if (result.rowCount == 0) {
-                response.status(404).send({
-                    message: "Chat ID not found"
-                })
-            } else {
-                next()
-            }
-        }).catch(error => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: error
-            })
-        })
-}, (request, response, next) => {
-    //validate jwt matches owner of chatroom
-    let query =  `SELECT MemberId FROM Members
-                WHERE Email IN (
-                    SELECT Email 
-                    FROM Chats
-                    WHERE chatid=$1
-                )
-                GROUP BY MemberId`
-    let values = [request.params.chatId]
-
-    pool.query(query, values)
-        .then(result => {
-            if (result.rowCount == 0) {
-                response.status(404).send({
-                    message: "Chat ID not found"
-                })
-            } else {
-                if (result.rows[0].memberid != request.decoded.memberid) {
-                    response.status(404).send({
-                        message: "User is not owner of chat room"
-                    })
-                } else {
-                    next()
-                }
-            }
-        }).catch(error => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: error
-            })
-        })
-}, (request, response, next) => {
-    //Delete the respective rows from chatmembers
-    let insert = `DELETE FROM ChatMembers where chatid=$1`
-    let values = [request.params.chatId]
-    pool.query(insert, values)
-        .then(result => {
-            next()
-        }).catch(err => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: err
-            })
-        })
-}, (request, response, next) => {
-    //Delete the respective rows from messages
-    let insert = `DELETE FROM Messages where chatid=$1`
-    let values = [request.params.chatId]
-    pool.query(insert, values)
-        .then(result => {
-            next()
-        }).catch(err => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: err
-            })
-        })
-}, (request, response) => {
-    //Delete the respective rows from chats
-    let insert = `DELETE FROM Chats where chatid=$1`
-    let values = [request.params.chatId]
-    pool.query(insert, values)
-        .then(result => {
-            response.send({
-                success: true
-            })
-        }).catch(err => {
-            response.status(400).send({
-                message: "SQL Error",
-                error: err
-            })
-        })
-})
 
 module.exports = router

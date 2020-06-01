@@ -406,7 +406,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>&quot;chatID not found&quot;</p>"
+            "description": "<p>&quot;chatId not found&quot;</p>"
           }
         ],
         "400: Invalid Parameter": [
@@ -499,7 +499,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>&quot;chatID not found&quot;</p>"
+            "description": "<p>&quot;chatId not found&quot;</p>"
           }
         ],
         "404: Email Not Found": [
@@ -680,7 +680,7 @@ define({ "api": [
     "title": "Request to get the chats a specific user is a part of",
     "name": "GetChats",
     "group": "Chats",
-    "description": "<p>Returns the chatids of every chat the user associated with the required JWT is a part of</p>",
+    "description": "<p>Returns the chatIds of every chat the user associated with the required JWT is a part of</p>",
     "header": {
       "fields": {
         "Header": [
@@ -716,7 +716,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "messages.chatId",
-            "description": "<p>The chatid for the chat room</p>"
+            "description": "<p>The chatId for the chat room</p>"
           }
         ]
       }
@@ -933,7 +933,7 @@ define({ "api": [
             "type": "String",
             "optional": false,
             "field": "message",
-            "description": "<p>&quot;chatID not found&quot;</p>"
+            "description": "<p>&quot;chatId not found&quot;</p>"
           }
         ],
         "404: Email Not Found": [
