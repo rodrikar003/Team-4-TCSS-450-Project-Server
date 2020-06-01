@@ -33,7 +33,7 @@ router.post("/", (request, response) => {
     if (request.body.primaryKey && request.body.MemberID_A && request.body.MemberID_B) {
     
         const theQuery = "UPDATE Contacts SET Verified = 1 WHERE Primarykey = $1"
-        const theQuery2 = "INSERT INTO Contacts(MemberID_A, MemberID_B, Verified) VALUES ($2, $3, 1)"
+        const theQuery2 = "INSERT INTO Contacts(MemberID_A, MemberID_B, Verified) VALUES ($1, $2, 1)"
         const values = [request.body.primaryKey]
         const theValues = [request.body.MemberID_A, request.body.MemberID_B]
 
@@ -53,7 +53,7 @@ router.post("/", (request, response) => {
                     response.status(400).send({
                         message: err.detail
                     })
-            }) 
+                }) 
                 
             })
             .catch(err => {
