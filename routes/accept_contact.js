@@ -39,7 +39,7 @@ router.post("/", (request, response) => {
 
         pool.query(theQuery, values)
             .then(result => {
-                if (result.rowCount == 0) {
+            
                     pool.query(theQuery2, theValues)
                     .then(result => {
                     response.status(201).send({
@@ -54,12 +54,6 @@ router.post("/", (request, response) => {
                         message: err.detail
                     })
             }) 
-                } else {
-                    response.status(400).send({
-                        success: true,
-                        message: "Friend Already Exists"
-                    })
-                }
                 
             })
             .catch(err => {
