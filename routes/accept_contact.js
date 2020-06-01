@@ -33,14 +33,14 @@ router.post("/", (request, response) => {
     if (request.body.primaryKey && request.body.MemberID_A && request.body.MemberID_B) {
     
         const theQuery = "UPDATE Contacts SET Verified = 1 WHERE Primarykey = $1"
-        const theQuery = "INSERT INTO Contacts(MemberID_A, MemberID_B, Verified) VALUES ($2, $3, 1)"
+        const theQuery2 = "INSERT INTO Contacts(MemberID_A, MemberID_B, Verified) VALUES ($2, $3, 1)"
         const values = [request.body.primaryKey]
         const theValues = [request.body.MemberID_A, request.body.MemberID_B]
 
         pool.query(theQuery, values)
             .then(result => {
                 if (result.rowCount == 0) {
-                    pool.query(theQuery, theValues)
+                    pool.query(theQuery2, theValues)
                     .then(result => {
                     response.status(201).send({
                     success: true,
