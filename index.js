@@ -21,7 +21,7 @@ app.use('/delete_contact', require('./routes/deleteContacts.js'))
 app.use('/messages', middleware.checkToken, require('./routes/messages.js'))
 app.use('/chats', middleware.checkToken, require('./routes/chats.js'))
 app.use('/auth', middleware.checkToken, require('./routes/pushyregister.js'))
-app.use('/favorites', require('./routes/favoriteLocation.js'))
+app.use('/favorites', require('./routes/favoriteLocations.js'))
 
 
 
