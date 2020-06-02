@@ -129,18 +129,19 @@ router.post("/delete/", (request, response) => {
  */ 
 router.post("/add/", (request, response) => {
 
-    if (request.body.MemberID_A && request.body.MemberID_B) {
+    if (request.body.memberid && request.body.zipcode) {
         const theQueryCheck = "SELECT * FROM Locations WHERE memberid = $1 AND zip = $2"
 
 
         const theQuery = "INSERT INTO Locations(memberid, zip, lat, long, city, state) VALUES ($1, $2, $3, $4, $5, $6)"
-        const values = [request.body.memberid, request.body.zipcode, request.body.latitude,
+        const values = [request.body.memberid, request.body.zipcode]
+        const values2 = [request.body.memberid, request.body.zipcode, request.body.latitude,
                         request.body.longitude, request.body.city,request.body.state]
 
         pool.query(theQueryCheck, values)
             .then(result => {
                 if (result.rowCount == 0) {
-                    pool.query(theQuery, values)
+                    pool.query(theQuery, values2)
                     .then(result => {
                     response.status(201).send({
                     success: true,
