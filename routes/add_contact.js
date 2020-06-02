@@ -108,7 +108,7 @@ router.post("/", (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
-            console.log(chatRoom);
+            console.log(sender);
             pushy.addIndividualAsContact(result.rows[0].token, sender);
             response.send({
                 success: true,
