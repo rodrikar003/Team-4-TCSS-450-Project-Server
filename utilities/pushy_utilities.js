@@ -65,10 +65,30 @@ function addIndividualAsContact(token, sender) {
     })
 }
 
+function acceptIndividualAsContact(token, accepter) {
+    var data = {
+        "type": "contact",
+        "accepter": accepter.accepter
+    }
+
+    // Send push notification via the Send Notifications API 
+    // https://pushy.me/docs/api/send-notifications 
+    pushyAPI.sendPushNotification(data, token, {}, function (err, id) {
+        // Log errors to console 
+        if (err) {
+            return console.log('Fatal Error', err);
+        }
+
+        // Log success 
+        console.log('Push sent successfully! (ID: ' + id + ')')
+    })
+}
+
 //add other "sendYypeToIndividual" functions here. Don't forget to exprot them
 
 module.exports = {
     sendMessageToIndividual,
     addIndividualToChatRoom,
-    addIndividualAsContact
+    addIndividualAsContact,
+    acceptIndividualAsContact
 }
