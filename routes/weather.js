@@ -66,7 +66,8 @@ var lon = parseFloat(location.longitude)
                 state: location.state,
                 zip: location.zip,
                 lati: lat,
-                longi: lon
+                longi: lon,
+                type: "weather"
             })
         }
     })
@@ -123,7 +124,8 @@ router.get("/coords/", (req, res) => {
                     state: location.state,
                     zip: location.zip, 
                     lati: lat,
-                    longi: lon
+                    longi: lon,
+                    type: "weather"
                 })
             }
         })
