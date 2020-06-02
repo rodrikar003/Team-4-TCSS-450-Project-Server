@@ -30,8 +30,7 @@ router.use(bodyParser.json())
 router.get("/", (request, response) => {
     
     const theQuery = 'SELECT lat, Long, zip, city, state FROM Locations WHERE memberid = $1'
-    let values = [request.query.username]
-    console.log(request.decode)
+    let values = [request.query.memberid]
     pool.query(theQuery, values)
         .then(result => {
             if (result.rowCount > 0) {

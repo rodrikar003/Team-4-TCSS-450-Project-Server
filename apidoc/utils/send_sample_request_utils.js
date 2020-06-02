@@ -3,7 +3,7 @@ if (typeof define !== 'function') {
     var define = require('amdefine')(module)
 }
 
-define(['lodash'], function (_) {
+define([], function () {
 
     function handleNestedFields(object, key, params, paramType) {
         var attributes = key.split('.');
@@ -41,39 +41,9 @@ define(['lodash'], function (_) {
         return result
     }
 
-    function tryParsingAsType(object, path, type) {
-        var val = _.get(object, path);
-        if (val !== undefined) {
-            if (type === 'Boolean') {
-                if (val === 'true') {
-                    _.set(object, path, true);
-                } else if (val === 'false') {
-                    _.set(object, path, false);
-                } else {
-                    console.warn('Failed to parse object value at path [' + path + ']. Value: (' + val + '). Type: (' + type + ')');
-                }
-            } else if (type === 'Number') {
-                var parsedInt = parseInt(val, 10);
-                if (!_.isNaN(parsedInt)) {
-                    _.set(object, path, parsedInt);
-                } else {
-                    console.warn('Failed to parse object value at path [' + path + ']. Value: (' + val + '). Type: (' + type + ')');
-                }
-            }
-        }
-    }
-
     function handleNestedAndParsingFields(param, paramType) {
         var result = handleArraysAndObjectFields(param, paramType);
         result = handleNestedFieldsForAllParams(result, paramType);
-        return result;
-    }
-
-    function tryParsingWithTypes(param, paramType) {
-        var result = Object.assign({}, param);
-        Object.keys(paramType).forEach(function (key) {
-            tryParsingAsType(result, key, paramType[key]);
-        });
         return result;
     }
 
@@ -82,5 +52,5 @@ define(['lodash'], function (_) {
         return url.replace(/{(.+?)}/g, ':$1');
     }
 
-    return {handleNestedAndParsingFields,convertPathParams,tryParsingWithTypes};
+    return {handleNestedAndParsingFields,convertPathParams};
 });

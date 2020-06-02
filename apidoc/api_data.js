@@ -1450,7 +1450,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "routes/fetch_contacts_pending.js",
+    "filename": "routes/fetch_contacts.js",
     "groupTitle": "Contacts"
   },
   {
@@ -1524,8 +1524,283 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "routes/fetch_contacts.js",
+    "filename": "routes/fetch_contacts_pending.js",
     "groupTitle": "Contacts"
+  },
+  {
+    "type": "post",
+    "url": "/favorites/delete",
+    "title": "Request to get all saved favorite locations for the user",
+    "name": "DeleteFavorites",
+    "group": "Favorites",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "Member_Id",
+            "description": "<p>for the users favorite list</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "zipcode",
+            "description": "<p>for the users favorite list item</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 201": [
+          {
+            "group": "Success 201",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the location is deleted</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Name exists": [
+          {
+            "group": "400: Name exists",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>error details</p>"
+          }
+        ],
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/favoriteLocations.js",
+    "groupTitle": "Favorites"
+  },
+  {
+    "type": "get",
+    "url": "/favorites",
+    "title": "Request to get all saved favorite locations for the user",
+    "name": "GetFavorites",
+    "group": "Favorites",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "MemberID",
+            "description": "<p>for the application user</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 200": [
+          {
+            "group": "Success 200",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the list of favorites returns</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "Object[]",
+            "optional": false,
+            "field": "favorites",
+            "description": "<p>a List of the user's weather location favorites</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "404: favorites Not Found": [
+          {
+            "group": "404: favorites Not Found",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;no locations not found&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/favoriteLocations.js",
+    "groupTitle": "Favorites"
+  },
+  {
+    "type": "post",
+    "url": "/favorites/add",
+    "title": "adds a location to the users favorites list",
+    "name": "PostFavorites",
+    "group": "Favorites",
+    "parameter": {
+      "fields": {
+        "Parameter": [
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "MemberID_A",
+            "description": "<p>users id</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "Zipcode",
+            "description": "<p>of the favorite location</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "Latitude",
+            "description": "<p>of the favorite location</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "Longitude",
+            "description": "<p>of the favorite location</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "City",
+            "description": "<p>of the favorite location</p>"
+          },
+          {
+            "group": "Parameter",
+            "type": "String",
+            "optional": false,
+            "field": "State",
+            "description": "<p>of the favorite location</p>"
+          }
+        ]
+      }
+    },
+    "success": {
+      "fields": {
+        "Success 201": [
+          {
+            "group": "Success 201",
+            "type": "boolean",
+            "optional": false,
+            "field": "success",
+            "description": "<p>true when the location is inserted</p>"
+          },
+          {
+            "group": "Success 201",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the inserted location</p>"
+          }
+        ]
+      }
+    },
+    "error": {
+      "fields": {
+        "400: Name exists": [
+          {
+            "group": "400: Name exists",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Location Already Exists&quot;</p>"
+          }
+        ],
+        "400: Missing Parameters": [
+          {
+            "group": "400: Missing Parameters",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;Missing required information&quot;</p>"
+          }
+        ],
+        "400: SQL Error": [
+          {
+            "group": "400: SQL Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>the reported SQL error details</p>"
+          }
+        ],
+        "400: JSON Error": [
+          {
+            "group": "400: JSON Error",
+            "type": "String",
+            "optional": false,
+            "field": "message",
+            "description": "<p>&quot;malformed JSON in parameters&quot;</p>"
+          }
+        ]
+      }
+    },
+    "version": "0.0.0",
+    "filename": "routes/favoriteLocations.js",
+    "groupTitle": "Favorites"
   },
   {
     "type": "get",
@@ -1802,6 +2077,34 @@ define({ "api": [
             "optional": false,
             "field": "weather",
             "description": "<p>weather information retrieved</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "city",
+            "description": "<p>the users inputed city is returned</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "state",
+            "description": "<p>the users inputed state is returned</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "latitude",
+            "description": "<p>the users inputed latitude is returned</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>The the users inputed longitude is returned</p>"
           }
         ]
       }
@@ -1881,6 +2184,34 @@ define({ "api": [
             "optional": false,
             "field": "weather",
             "description": "<p>weather information retrieved</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "city",
+            "description": "<p>the users inputed city is returned</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "state",
+            "description": "<p>The the users inputed state is returned</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "latitude",
+            "description": "<p>the users inputed latitude is returned</p>"
+          },
+          {
+            "group": "Success 200",
+            "type": "String",
+            "optional": false,
+            "field": "longitude",
+            "description": "<p>The the users inputed longitude is returned</p>"
           }
         ]
       }

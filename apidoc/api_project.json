@@ -9,15 +9,16 @@
     "Contacts",
     "Messages",
     "Chats",
-    "Weather"
+    "Weather",
+    "Favorites"
   ],
   "sampleUrl": false,
   "defaultVersion": "0.0.0",
   "apidoc": "0.3.0",
   "generator": {
     "name": "apidoc",
-    "time": "2020-06-01T19:33:33.367Z",
+    "time": "2020-06-02T08:27:27.976Z",
     "url": "http://apidocjs.com",
-    "version": "0.23.0"
+    "version": "0.22.1"
   }
 }
