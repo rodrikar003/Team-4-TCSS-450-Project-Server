@@ -46,7 +46,7 @@ function addIndividualToChatRoom(token, chatRoom) {
     })
 }
 
-function addIndivdualAsContact(token, sender) {
+function addIndividualAsContact(token, sender) {
     var data = {
         "type": "contact",
         "sender": sender.sender
@@ -69,5 +69,6 @@ function addIndivdualAsContact(token, sender) {
 
 module.exports = {
     sendMessageToIndividual,
-    addIndividualToChatRoom
+    addIndividualToChatRoom,
+    addIndividualAsContact
 }
