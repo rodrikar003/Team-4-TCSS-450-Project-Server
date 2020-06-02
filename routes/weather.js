@@ -19,6 +19,10 @@ var router = express.Router()
  * @apiParam {String} zipcode for any location
  * 
  * @apiSuccess {String} weather weather information retrieved
+ * @apiSuccess {String} city the users inputed city is returned 
+ * @apiSuccess {String} state the users inputed state is returned
+ * @apiSuccess {String} latitude the users inputed latitude is returned 
+ * @apiSuccess {String} longitude The the users inputed longitude is returned
  * @apiDescription This end point is a pass through to the OpenWeatherMap API. 
  * All parameters will pass on to api.openweathermap.org/data/2.5/onecall.
  * See the <a href="https://openweathermap.org/api/one-call-api">openweathermap.org documentation</a>
@@ -60,7 +64,9 @@ var lon = parseFloat(location.longitude)
                 weather: body,
                 city: location.city,
                 state: location.state,
-                zip: location.zip
+                zip: location.zip,
+                lati: lat,
+                longi: lon
             })
         }
     })
@@ -78,6 +84,10 @@ var lon = parseFloat(location.longitude)
  * @apiParam {String} Longitute for any geographical location 
  * 
  * @apiSuccess {String} weather weather information retrieved
+ * @apiSuccess {String} city the users inputed city is returned 
+ * @apiSuccess {String} state The the users inputed state is returned
+ * @apiSuccess {String} latitude the users inputed latitude is returned 
+ * @apiSuccess {String} longitude The the users inputed longitude is returned
  * @apiDescription This end point is a pass through to the OpenWeatherMap API. 
  * All parameters will pass on to api.openweathermap.org/data/2.5/onecall.
  * See the <a href="https://openweathermap.org/api/one-call-api">openweathermap.org documentation</a>
@@ -111,7 +121,9 @@ router.get("/coords/", (req, res) => {
                     weather: body,
                     city: location.city,
                     state: location.state,
-                    zip: location.zip
+                    zip: location.zip, 
+                    lati: lat,
+                    longi: lon
                 })
             }
         })

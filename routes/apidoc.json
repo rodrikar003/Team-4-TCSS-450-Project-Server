@@ -9,6 +9,7 @@
        "Contacts",
        "Messages",
        "Chats",
-       "Weather"
+       "Weather",
+       "Favorites" 
     ]
   }
