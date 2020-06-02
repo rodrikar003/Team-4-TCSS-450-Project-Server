@@ -29,7 +29,7 @@ router.use(bodyParser.json())
  * 
  * @apiUse JSONError
  */ 
-router.post("/", (request, response) => {
+router.post("/", (request, response, next) => {
     if (request.body.primaryKey && request.body.MemberID_A && request.body.MemberID_B) {
     
         const theQuery = "UPDATE Contacts SET Verified = 1 WHERE Primarykey = $1"
