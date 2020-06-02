@@ -32,7 +32,6 @@ router.use(bodyParser.json())
  * @apiUse JSONError
  */ 
 router.post("/", (request, response, next) => {
-    console.log(request);
     if (request.body.MemberID_A && request.body.MemberID_B) {
         let query = "SELECT * FROM Contacts WHERE MemberID_A = $1 AND MemberID_B = $2"
         let values = [request.body.MemberID_A, request.body.MemberID_B]
@@ -109,7 +108,6 @@ router.post("/", (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
-            console.log(sender);
             pushy.addIndividualAsContact(result.rows[0].token, sender);
             response.send({
                 success: true,

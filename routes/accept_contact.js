@@ -30,7 +30,6 @@ router.use(bodyParser.json())
  * @apiUse JSONError
  */ 
 router.post("/", (request, response, next) => {
-    console.log(request);
     if (request.body.primaryKey && request.body.MemberID_A && request.body.MemberID_B) {
     
         const theQuery = "UPDATE Contacts SET Verified = 1 WHERE Primarykey = $1"
@@ -96,7 +95,6 @@ router.post("/", (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
-            console.log(accepter);
             pushy.acceptIndividualAsContact(result.rows[0].token, accepter);
             response.send({
                 success: true,
