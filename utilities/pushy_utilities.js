@@ -84,8 +84,6 @@ function acceptIndividualAsContact(token, accepter) {
     })
 }
 
-//add other "sendYypeToIndividual" functions here. Don't forget to exprot them
-
 module.exports = {
     sendMessageToIndividual,
     addIndividualToChatRoom,

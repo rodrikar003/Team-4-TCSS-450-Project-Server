@@ -32,6 +32,7 @@ router.use(bodyParser.json())
  * @apiUse JSONError
  */ 
 router.post("/", (request, response, next) => {
+    console.log(request);
     if (request.body.MemberID_A && request.body.MemberID_B) {
         let query = "SELECT * FROM Contacts WHERE MemberID_A = $1 AND MemberID_B = $2"
         let values = [request.body.MemberID_A, request.body.MemberID_B]
