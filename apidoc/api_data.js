@@ -367,7 +367,7 @@ define({ "api": [
   },
   {
     "type": "post",
-    "url": "/chats/",
+    "url": "chats/",
     "title": "Request to add a chat",
     "name": "AddChat",
     "group": "Chats",
@@ -1450,7 +1450,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "routes/fetch_contacts.js",
+    "filename": "routes/fetch_contacts_pending.js",
     "groupTitle": "Contacts"
   },
   {
@@ -1524,7 +1524,7 @@ define({ "api": [
       }
     },
     "version": "0.0.0",
-    "filename": "routes/fetch_contacts_pending.js",
+    "filename": "routes/fetch_contacts.js",
     "groupTitle": "Contacts"
   },
   {
