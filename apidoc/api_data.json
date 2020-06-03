@@ -1,7 +1,7 @@
 [
   {
     "type": "delete",
-    "url": "/auth",
+    "url": "auth",
     "title": "Request to delete a Pushy Token for the user",
     "name": "DeleteAuth",
     "group": "Auth",
@@ -77,7 +77,7 @@
   },
   {
     "type": "get",
-    "url": "/login",
+    "url": "auth/",
     "title": "Request to sign a user in the system",
     "name": "GetAuth",
     "group": "Auth",
@@ -167,7 +167,7 @@
   },
   {
     "type": "post",
-    "url": "/register",
+    "url": "auth/",
     "title": "Request to resgister a user",
     "name": "PostAuth",
     "group": "Auth",
@@ -278,7 +278,7 @@
   },
   {
     "type": "put",
-    "url": "/auth",
+    "url": "auth",
     "title": "Request to insert a Pushy Token for the user",
     "name": "PutAuth",
     "group": "Auth",
@@ -461,7 +461,7 @@
   },
   {
     "type": "put",
-    "url": "/chats/",
+    "url": "chats/",
     "title": "Request add a user to a chat room",
     "name": "AddUserToChat",
     "group": "Chats",
@@ -603,7 +603,7 @@
   },
   {
     "type": "delete",
-    "url": "/chats/:chatId",
+    "url": "chats/:chatId",
     "title": "Requests to delete a chat room",
     "name": "DeleteChat",
     "group": "Chats",
@@ -698,7 +698,7 @@
   },
   {
     "type": "get",
-    "url": "/chats",
+    "url": "chats",
     "title": "Request to get the chats a specific user is a part of",
     "name": "GetChats",
     "group": "Chats",
@@ -812,7 +812,7 @@
   },
   {
     "type": "get",
-    "url": "/chats/:chatId?",
+    "url": "chats/:chatId?",
     "title": "Request to get the emails of all users in a chat",
     "name": "GetUsersInChat",
     "group": "Chats",
@@ -924,7 +924,7 @@
   },
   {
     "type": "delete",
-    "url": "/chats/:chatId/:email",
+    "url": "chats/:chatId/:email",
     "title": "Request delete a user from a chat",
     "name": "RemoveUserFromChat",
     "group": "Chats",
@@ -1044,7 +1044,7 @@
   },
   {
     "type": "post",
-    "url": "/add_user",
+    "url": "add_user",
     "title": "adds two contacts together",
     "name": "GetContacts",
     "group": "Contacts",
@@ -1134,7 +1134,7 @@
   },
   {
     "type": "get",
-    "url": "/lookup_user/",
+    "url": "lookup_user/",
     "title": "Request to get all users with the given username/nickname",
     "name": "GetContacts",
     "group": "Contacts",
@@ -1229,7 +1229,7 @@
   },
   {
     "type": "post",
-    "url": "/delete_contact",
+    "url": "delete_contact",
     "title": "deletes an existing contact",
     "name": "GetDeleteContacts",
     "group": "Contacts",
@@ -1305,7 +1305,7 @@
   },
   {
     "type": "post",
-    "url": "/delete_contact",
+    "url": "delete_contact",
     "title": "deletes an existing contact",
     "name": "GetDeleteContacts",
     "group": "Contacts",
@@ -1381,7 +1381,7 @@
   },
   {
     "type": "get",
-    "url": "/fetch_contact/",
+    "url": "fetch_contact/",
     "title": "Request to get all of the user's contacts",
     "name": "GetUserContacts",
     "group": "Contacts",
@@ -1455,7 +1455,7 @@
   },
   {
     "type": "get",
-    "url": "/fetch_contact/",
+    "url": "fetch_contact/",
     "title": "Request to get all of the user's contacts",
     "name": "GetUserContacts",
     "group": "Contacts",
@@ -1529,7 +1529,7 @@
   },
   {
     "type": "post",
-    "url": "/favorites/delete",
+    "url": "favorites/delete",
     "title": "Request to get all saved favorite locations for the user",
     "name": "DeleteFavorites",
     "group": "Favorites",
@@ -1612,7 +1612,7 @@
   },
   {
     "type": "get",
-    "url": "/favorites",
+    "url": "favorites",
     "title": "Request to get all saved favorite locations for the user",
     "name": "GetFavorites",
     "group": "Favorites",
@@ -1686,7 +1686,7 @@
   },
   {
     "type": "post",
-    "url": "/favorites/add",
+    "url": "favorites/add",
     "title": "adds a location to the users favorites list",
     "name": "PostFavorites",
     "group": "Favorites",
@@ -1804,7 +1804,7 @@
   },
   {
     "type": "get",
-    "url": "/messages/:chatId?/:messageId?",
+    "url": "messages/:chatId?/:messageId?",
     "title": "Request to get chat messages",
     "name": "GetMessages",
     "group": "Messages",
@@ -1932,7 +1932,7 @@
   },
   {
     "type": "post",
-    "url": "/messages",
+    "url": "messages",
     "title": "Request to add a message to a specific chat",
     "name": "PostMessages",
     "group": "Messages",
@@ -2038,7 +2038,7 @@
   },
   {
     "type": "get",
-    "url": "/weather/zipcode/",
+    "url": "weather/zipcode/",
     "title": "All in one call request for current, daily, and hourly weather from OpenWeatherMap",
     "name": "GetWeather",
     "group": "Weather",
@@ -2138,7 +2138,7 @@
   },
   {
     "type": "get",
-    "url": "/weather/coords/",
+    "url": "weather/coords/",
     "title": "All in one call request for current, daily, and hourly weather from OpenWeatherMap",
     "name": "GetWeather",
     "group": "Weather",

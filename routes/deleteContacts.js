@@ -12,7 +12,7 @@ const bodyParser = require("body-parser")
 router.use(bodyParser.json())
 
 /**
- * @api {post} /delete_contact deletes an existing contact
+ * @api {post} delete_contact deletes an existing contact
  * @apiName GetDeleteContacts
  * @apiGroup Contacts
  * 

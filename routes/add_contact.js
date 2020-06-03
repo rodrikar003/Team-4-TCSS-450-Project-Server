@@ -13,7 +13,7 @@ const bodyParser = require("body-parser")
 router.use(bodyParser.json())
 
 /**
- * @api {post} /add_user adds two contacts together
+ * @api {post} add_user adds two contacts together
  * @apiName GetContacts
  * @apiGroup Contacts
  * 

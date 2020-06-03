@@ -10,7 +10,7 @@ var router = express.Router()
 router.use(require("body-parser").json())
 
 /**
- * @api {put} /auth Request to insert a Pushy Token for the user
+ * @api {put} auth Request to insert a Pushy Token for the user
  * @apiName PutAuth
  * @apiGroup Auth
  * 
@@ -89,7 +89,7 @@ router.put('/', (request, response, next) => {
 })
 
 /**
- * @api {delete} /auth Request to delete a Pushy Token for the user
+ * @api {delete} auth Request to delete a Pushy Token for the user
  * @apiName DeleteAuth
  * @apiGroup Auth
  * 

@@ -12,7 +12,7 @@ const bodyParser = require("body-parser")
 router.use(bodyParser.json())
 
 /**
- * @api {get} /favorites Request to get all saved favorite locations for the user
+ * @api {get} favorites Request to get all saved favorite locations for the user
  * @apiName GetFavorites
  * @apiGroup Favorites 
  * 
@@ -56,7 +56,7 @@ router.get("/", (request, response) => {
 
 
 /**
- * @api {post} /favorites/delete Request to get all saved favorite locations for the user
+ * @api {post} favorites/delete Request to get all saved favorite locations for the user
  * @apiName DeleteFavorites
  * @apiGroup Favorites 
  * 
@@ -104,7 +104,7 @@ router.post("/delete/", (request, response) => {
 })
 
 /**
- * @api {post} /favorites/add adds a location to the users favorites list
+ * @api {post} favorites/add adds a location to the users favorites list
  * @apiName PostFavorites
  * @apiGroup Favorites
  * 

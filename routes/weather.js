@@ -11,7 +11,7 @@ var zipcodes = require('zipcodes');
 var router = express.Router()
 
 /**
- * @api {get} /weather/zipcode/ All in one call request for current, daily, and hourly weather from OpenWeatherMap
+ * @api {get} weather/zipcode/ All in one call request for current, daily, and hourly weather from OpenWeatherMap
  * @apiName GetWeather
  * @apiGroup Weather
  * 
@@ -76,7 +76,7 @@ var lon = parseFloat(location.longitude)
 
 
 /**
- * @api {get} /weather/coords/ All in one call request for current, daily, and hourly weather from OpenWeatherMap
+ * @api {get} weather/coords/ All in one call request for current, daily, and hourly weather from OpenWeatherMap
  * @apiName GetWeather
  * @apiGroup Weather
  * 

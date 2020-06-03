@@ -12,7 +12,7 @@ const bodyParser = require("body-parser")
 router.use(bodyParser.json())
 
 /**
- * @api {get} /lookup_user/ Request to get all users with the given username/nickname
+ * @api {get} lookup_user/ Request to get all users with the given username/nickname
  * @apiName GetContacts
  * @apiGroup Contacts
  * 

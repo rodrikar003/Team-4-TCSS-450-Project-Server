@@ -80,7 +80,7 @@ router.post("/", (request, response, next) => {
 })
 
 /**
- * @api {delete} /chats/:chatId Requests to delete a chat room
+ * @api {delete} chats/:chatId Requests to delete a chat room
  * @apiName DeleteChat
  * @apiGroup Chats
  * 
@@ -204,7 +204,7 @@ router.delete("/:chatId", (request, response, next) => {
 })
 
 /**
- * @api {put} /chats/ Request add a user to a chat room
+ * @api {put} chats/ Request add a user to a chat room
  * @apiName AddUserToChat
  * @apiGroup Chats
  * 
@@ -391,7 +391,7 @@ router.put("/", (request, response, next) => {
 })
 
 /**
- * @api {delete} /chats/:chatId/:email Request delete a user from a chat
+ * @api {delete} chats/:chatId/:email Request delete a user from a chat
  * @apiName RemoveUserFromChat
  * @apiGroup Chats
  * 
@@ -541,7 +541,7 @@ router.delete("/:chatId/:email", (request, response, next) => {
 )
 
 /**
- * @api {get} /chats/:chatId? Request to get the emails of all users in a chat
+ * @api {get} chats/:chatId? Request to get the emails of all users in a chat
  * @apiName GetUsersInChat
  * @apiGroup Chats
  * 
@@ -616,7 +616,7 @@ router.get("/:chatId", (request, response, next) => {
 });
 
 /**
- * @api {get} /chats Request to get the chats a specific user is a part of
+ * @api {get} chats Request to get the chats a specific user is a part of
  * @apiName GetChats
  * @apiGroup Chats
  * 
