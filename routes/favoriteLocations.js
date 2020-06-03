@@ -29,7 +29,7 @@ router.use(bodyParser.json())
  */ 
 router.get("/", (request, response) => {
     
-    const theQuery = 'SELECT lat, Long, zip, city, state FROM Locations WHERE memberid = $1'
+    const theQuery = 'SELECT lat, long, zip, city, state FROM Locations WHERE memberid = $1'
     let values = [request.query.memberid]
     pool.query(theQuery, values)
         .then(result => {

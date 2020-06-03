@@ -46,8 +46,7 @@ location = zipcodes.lookup(zipcode);
 
 if (typeof location === 'undefined') {
     res.status(400).send({
-        message: "Invalid Zipcode",
-        type: "weather"})
+        message: "Invalid Zipcode"})
 }
 // parse result to float
 var lat = parseFloat(location.latitude)
@@ -104,8 +103,7 @@ router.get("/coords/", (req, res) => {
     location = zipcodes.lookupByCoords(req.query.lat,req.query.lon);
     if (typeof location === 'undefined') {
         res.status(400).send({
-            message: "Invalid Latitude/Longitude location",
-            type: "weather"})
+            message: "Invalid Latitude/Longitude location"})
     }
     console.log(location)
     // parse result to float
