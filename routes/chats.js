@@ -377,7 +377,6 @@ router.put("/", (request, response, next) => {
 
     pool.query(query, values)
         .then(result => {
-            console.log(chatRoom);
             pushy.addIndividualToChatRoom(result.rows[0].token, chatRoom);
             response.send({
                 success: true,
