@@ -45,7 +45,7 @@ router.post("/", (request, response) => {
             .catch(err => {
                 //log the error
                     response.status(400).send({
-                        message: err.detail
+                        message: "I'm here" + err.detail
                     })
                 
             }) 
