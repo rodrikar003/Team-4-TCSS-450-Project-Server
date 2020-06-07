@@ -32,7 +32,7 @@ router.post("/", (request, response) => {
 
     if (request.body.MemberID_A && request.body.MemberID_B) {
     
-        const theQuery = "DELETE FROM Contacts WHERE (MemberID_A = $1 AND MemberID_B = $2)"
+        const theQuery = "DELETE FROM Contacts WHERE MemberID_A = $1 AND MemberID_B = $2"
         const values = [request.body.MemberID_A && request.body.MemberID_B]
 
         pool.query(theQuery, values)
