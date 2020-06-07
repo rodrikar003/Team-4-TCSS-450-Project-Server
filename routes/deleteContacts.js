@@ -30,10 +30,10 @@ router.use(bodyParser.json())
  */ 
 router.post("/", (request, response) => {
 
-    if (request.body.primaryKey) {
+    if (request.body.MemberID_A && request.body.MemberID_B) {
     
-        const theQuery = "DELETE FROM Contacts WHERE primaryKey=$1"
-        const values = [request.body.primaryKey]
+        const theQuery = "DELETE FROM Contacts WHERE (MemberID_A=$1 OR MemberID_A = $2) AND (MemberID_B=$1 OR MemberID_B = $2)"
+        const values = [request.body.MemberID_A && request.body.MemberID_B]
 
         pool.query(theQuery, values)
             .then(result => {

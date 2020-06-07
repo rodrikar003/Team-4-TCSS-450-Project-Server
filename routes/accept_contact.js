@@ -48,20 +48,20 @@ router.post("/", (request, response, next) => {
             message: "Missing required information"
         })
     }    
-// }, (request, response, next) => {
-//     let query = "INSERT INTO Contacts(MemberID_A, MemberID_B, Verified) VALUES ($1, $2, 1)"
-//     let values = [request.body.MemberID_A, request.body.MemberID_B]
+}, (request, response, next) => {
+    let query = "INSERT INTO Contacts(MemberID_A, MemberID_B, Verified) VALUES ($1, $2, 1)"
+    let values = [request.body.MemberID_A, request.body.MemberID_B]
 
-//     pool.query(query, values)
-//         .then(result => {
-//             next()
-//         .catch(err => {
-//             //log the error
-//             response.status(400).send({
-//                 message: err.detail
-//             })
-//         })
-//     })
+    pool.query(query, values)
+        .then(result => {
+            next()
+        .catch(err => {
+            //log the error
+            response.status(400).send({
+                message: err.detail
+            })
+        })
+    })
 
 }, (request, response, next) => {
     // Get sender's email
